@@ -12,6 +12,6 @@
         </button>
         <h1 class="text-8xl text-center font-bold text-eerie-black dark:text-floral-white">Pregame Info</h1>
     </div>
-    <div class="w-full h-full bg-eerie-black dark:bg-floral-white">
+    <div class="w-full h-full bg-floral-white dark:bg-black-olive">
     </div>
 </div>
