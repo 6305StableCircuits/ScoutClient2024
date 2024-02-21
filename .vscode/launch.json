@@ -1,0 +1,18 @@
+{
+   //When using Ctrl+F5, VSCode will automatically start the Svelte app. - computerguy :)
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Launch Svelte Program in a new tab",
+            "command": "npm run dev -- --open",
+        },
+        {
+            "type": "node-terminal",
+            "request": "launch",
+            "name": "Launch Svelte Program",
+            "command": "npm run dev"
+        }
+    ]
+}
