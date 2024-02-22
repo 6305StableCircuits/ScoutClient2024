@@ -1,5 +1,9 @@
+
 <script lang=ts>
 	import { Timer } from "$lib/classes/Timer";
+	import Layout from "../+layout.svelte";
+    console.log("Hello, World!");  // This will be saved into console.logs
+
 
     let matchStarted: Boolean = false;
     let matchTime: number = 150;
@@ -9,38 +13,42 @@
     let hasIntaked: Boolean = false;
     let isCharge: Boolean = false;
     let points: number = 0;
-    let matchTimer = new Timer("matchTimer", matchTime,{
+    let timeRemaining = 150;
+    let matchTimer = new Timer("matchTimer", {
         onStart() {
             matchStarted = true;
+        },
+        onUpdate() {
+            timeRemaining = matchTime - (matchTimer.time + 1);
+            if(matchTimer.time == 150) {
+                matchTimer.stop();
+            }
+            if(matchTimer.time == 0) {
+                matchPhase = "Pregame"
+            } else if(matchTimer.time <= 15) {
+                matchPhase = "Auto"
+            } else if(matchTimer.time > 15) {
+                matchPhase = "Teleop"
+            } else if(matchTimer.time >= 150) {
+                matchPhase = "Postgame"
+            }
         },
         onEnd() {
             matchStarted = false;
         }
     });
-    let incapTimer = new Timer("incapTimer", 0);
- 
+    
+    let incapTimer = new Timer("incapTimer");
+    
     let autoInvalid = true;
     $: autoInvalid = matchPhase == "Auto" || matchPhase == "Pregame";
 
     let preGameInvalid = true;
     $: preGameInvalid = matchPhase == "Pregame";
     
-    let timeRemaining = 150;
-    $: {timeRemaining = matchTime - matchTimer.time};
-
+    // $: timeRemaining = matchTime - matchTimer.time;
+    
     let matchPhase: string = "Pregame";
-    $: {
-        if(matchTimer.time == 0) {
-            matchPhase = "Pregame"
-        } else if(matchTimer.time <= 15) {
-            matchPhase = "Auto"
-        } else if(matchTimer.time > 15) {
-            matchPhase = "Teleop"
-        } else if(matchTimer.time >= 150) {
-            matchPhase = "Postgame"
-        }
-    }
-
     function scoreAmp() {
         if(matchPhase == "Auto") {
             points += 2;
@@ -79,7 +87,7 @@
     //     incapTimer += 1;
     //     setTimeout(incrIncapTimer, 1000);
     // }
-    
+        
 </script>
 
 <div class="bg-black-olive h-screen">
@@ -92,7 +100,7 @@
         <button class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
         {/if}
         {#if matchStarted}
-        <div class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl">
+        <div class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl" id="matchTimer">
             {matchPhase} | {Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}
         </div>
         {/if}

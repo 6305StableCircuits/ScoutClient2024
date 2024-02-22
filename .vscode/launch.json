@@ -5,14 +5,14 @@
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Launch Svelte Program in a new tab",
-            "command": "npm run dev -- --open",
+            "name": "Launch Svelte Program",
+            "command": "npm run dev"
         },
         {
             "type": "node-terminal",
             "request": "launch",
-            "name": "Launch Svelte Program",
-            "command": "npm run dev"
+            "name": "Launch Svelte Program in a new tab",
+            "command": "npm run dev -- --open",
         }
     ]
 }

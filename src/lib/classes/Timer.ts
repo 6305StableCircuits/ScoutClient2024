@@ -1,5 +1,6 @@
 interface Hooks {
     onStart?: () => void;
+    onUpdate?: () => void;
     onEnd?: () => void;
 }
 
@@ -8,19 +9,27 @@ export class Timer {
     private readonly hooks: Hooks;
     private _time: number;
     private timer: any;
-    private timerLength: number;
-    constructor(name: string, timerLength: number, hooks: Hooks = {}) {
+    constructor(name: string, hooks: Hooks = {}) {
         this.name = name;
-        this.timerLength = timerLength;
         this.hooks = hooks;
+        this.timer;
         this._time = 0;
     }
+
+
 
     public start() {
         if ('onStart' in this.hooks && this.hooks.onStart != undefined) {
             this.hooks.onStart();
-            this.timer = setInterval(() => {this._time++; if(this._time == this.timerLength){this.timer.clear()}}, 1000);
         }
+        this.timer = setInterval((() => this.update()), 1000);
+    }
+    
+    private update() {
+        if ('onUpdate' in this.hooks && this.hooks.onUpdate != undefined) {
+            this.hooks.onUpdate();
+        }
+        this._time++;
     }
 
     public stop() {
@@ -38,3 +47,4 @@ export class Timer {
         return this._time;
     }
 }
+
