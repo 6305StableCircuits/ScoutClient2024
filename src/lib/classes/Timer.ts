@@ -35,7 +35,7 @@ export class Timer {
     public stop() {
         if ('onEnd' in this.hooks && this.hooks.onEnd != undefined) {
             this.hooks.onEnd();
-            this.timer.clear();
+            clearInterval(this.timer);
         }
     }
 

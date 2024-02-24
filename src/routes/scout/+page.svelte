@@ -1,9 +1,6 @@
 
 <script lang=ts>
 	import { Timer } from "$lib/classes/Timer";
-	import Layout from "../+layout.svelte";
-    console.log("Hello, World!");  // This will be saved into console.logs
-
 
     let matchStarted: Boolean = false;
     let matchTime: number = 150;
@@ -14,22 +11,24 @@
     let isCharge: Boolean = false;
     let points: number = 0;
     let timeRemaining = 150;
+    let stopwatch: number = 0;
     let matchTimer = new Timer("matchTimer", {
         onStart() {
             matchStarted = true;
         },
         onUpdate() {
             timeRemaining = matchTime - (matchTimer.time + 1);
+
             if(matchTimer.time == 150) {
                 matchTimer.stop();
             }
-            if(matchTimer.time == 0) {
+            if((matchTimer.time + 1) == 0) {
                 matchPhase = "Pregame"
-            } else if(matchTimer.time <= 15) {
+            } else if((matchTimer.time + 1) <= 15) {
                 matchPhase = "Auto"
-            } else if(matchTimer.time > 15) {
+            } else if((matchTimer.time + 1) > 15) {
                 matchPhase = "Teleop"
-            } else if(matchTimer.time >= 150) {
+            } else if((matchTimer.time + 1) >= 150) {
                 matchPhase = "Postgame"
             }
         },
@@ -38,7 +37,19 @@
         }
     });
     
-    let incapTimer = new Timer("incapTimer");
+    let incapTimer = new Timer("incapTimer", {
+        onStart() {
+            isIncap = true;
+        },
+        onUpdate() {
+            stopwatch = incapTimer.time + 1;
+        },
+        onEnd() {
+            incapTimer.reset();
+            stopwatch = 0;
+            isIncap = false;
+        }
+    });
     
     let autoInvalid = true;
     $: autoInvalid = matchPhase == "Auto" || matchPhase == "Pregame";
@@ -46,9 +57,8 @@
     let preGameInvalid = true;
     $: preGameInvalid = matchPhase == "Pregame";
     
-    // $: timeRemaining = matchTime - matchTimer.time;
-    
     let matchPhase: string = "Pregame";
+
     function scoreAmp() {
         if(matchPhase == "Auto") {
             points += 2;
@@ -68,26 +78,6 @@
     function intake() {
         hasIntaked = true;
     }
-    
-    // function incap() {
-    //     if(!isIncap) {
-    //         startIncap = timer;
-    //         isIncap = true;
-    //         incrIncapTimer();
-    //     } else {
-    //         endIncap = timer;
-    //         isIncap = false;
-    //     }
-    // }
-
-    // function incrIncapTimer() {
-    //     if(!isIncap) {
-    //         return;
-    //     }
-    //     incapTimer += 1;
-    //     setTimeout(incrIncapTimer, 1000);
-    // }
-        
 </script>
 
 <div class="bg-black-olive h-screen">
@@ -119,11 +109,11 @@
     {/if}
     <div class="flex pt-sm items-center justify-center">
         {#if !isIncap}
-        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click={incapTimer.start}>Start Incap</button>
+        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click={() => incapTimer.start()}>Start Incap</button>
         {/if}
         {#if isIncap}
-        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:opacity-85 w-[15%]" on:click={incapTimer.stop}>
-            {Math.floor(((incapTimer.time) / 60))}:{String((incapTimer.time) % 60).padStart(2, '0')} | End Incap
+        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:opacity-85 w-[15%]" on:click={() => incapTimer.stop()}>
+            {Math.floor(((stopwatch) / 60))}:{String((stopwatch) % 60).padStart(2, '0')} | End Incap
         </button>
         {/if}
         {#if matchPhase == "Auto" || matchPhase == "Pregame"}
