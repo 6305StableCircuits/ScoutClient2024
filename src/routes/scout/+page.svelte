@@ -65,6 +65,7 @@
         } else {
             points += 1;
         }
+        hasIntaked = false;
     }
 
     function scoreSpeaker() {
@@ -73,6 +74,7 @@
         } else {
             points += 2;
         }
+        hasIntaked = false;
     }
 
     function intake() {
