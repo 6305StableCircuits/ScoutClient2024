@@ -1,5 +1,4 @@
 <script lang=ts>
-    
     import { goto } from "$app/navigation";
     /*const options = {
         method: 'POST',
@@ -37,7 +36,7 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
 })
 .then(response => {
     if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('error: network sad :(');
     }
     return response.json();
 })

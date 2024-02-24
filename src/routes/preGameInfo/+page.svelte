@@ -1,6 +1,18 @@
 <script lang=ts>
     import { goto } from "$app/navigation";
-
+    var team: number;
+    var color = 'Red';
+    var scouter = "";
+    if(!!!scouter){
+        scouter = "";
+    }
+    const saveData = function(){
+        localStorage.setItem("pregameinfo", JSON.stringify({
+            team: team.toString(),
+            color: color,
+            scouter: scouter,
+        }));
+    }
 </script>
 
 <div class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">
@@ -12,6 +24,10 @@
         </button>
         <h1 class="text-8xl text-center font-bold text-eerie-black dark:text-floral-white">Pregame Info</h1>
     </div>
-    <div class="w-full h-full bg-floral-white dark:bg-black-olive">
+    <div class="w-full h-full bg-floral-white dark:bg-black-olive" accesskey="inpts">
+        <label for="team">Team</label>&nbsp;&nbsp;<input type="number" value={team} name="team">""<br>
+        <label for="scouter">Scouter Name</label>&nbsp;&nbsp;<input type="text" value={scouter} name="scouter" autocorrect="false"><br>
+        <label for="color">Color</label>&nbsp;&nbsp;<select name="color" value={color}><option>Red</option><option>Blue</option></select><br>
+        <button on:click={()=>{saveData();goto('/scout')}}>Start</button>
     </div>
 </div>

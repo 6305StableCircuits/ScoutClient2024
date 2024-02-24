@@ -1,7 +1,75 @@
 
 <script lang=ts>
+	import { goto } from "$app/navigation";
 	import { Timer } from "$lib/classes/Timer";
-
+    let matchData = {
+        team: "",
+        scouter: "",
+        color: "",
+        startTime: Date(),
+        score: Number,
+        incapLogs:[
+            {},
+            
+        ],
+        intakeLogs: [
+            {},
+            
+        ],
+    };
+    if(localStorage.getItem("pregameinfo") !== null){
+        goto('./preGameInfo');
+    }else{
+        var thing;
+        var pregameinfo;
+        //hey bro i heard you like sandboxing so i sandboxed your sandboxes
+        try{
+            try{
+            thing = localStorage.getItem("pregameinfo");
+            }catch(err){
+                thing = null;
+                goto('./preGameInfo');
+            }
+            try{
+            if(thing == null){
+                goto('./preGameInfo');
+            }else{
+                try{
+                pregameinfo = JSON.parse(thing);
+                }catch(err){
+                    pregameinfo = {};
+                    goto('./preGameInfo');
+                }
+                try{
+                    try{
+                        matchData.team = pregameinfo.team;
+                    }catch(err){
+                        goto('./preGameInfo');
+                    }
+                    try{
+                        matchData.color = pregameinfo.color;
+                    }catch(err){
+                        goto('./preGameInfo');
+                    }
+                    try{
+                        matchData.scouter = pregameinfo.scouter;
+                    }catch(err){
+                        goto('./preGameInfo');
+                    }
+                }catch(err){
+                    goto('./preGameInfo');
+                }
+                console.log(matchData);
+            }
+        }catch(err){
+            goto('./pregameInfo');
+        }
+        }catch(err){
+            goto('./preGameInfo');
+        }
+    }
+    
+    var actions = [];
     let matchStarted: Boolean = false;
     let matchTime: number = 150;
     let isIncap: Boolean = false;
@@ -36,15 +104,21 @@
             matchStarted = false;
         }
     });
-    
+    let incapStart = "";
     let incapTimer = new Timer("incapTimer", {
         onStart() {
+            incapStart = Date();
             isIncap = true;
         },
         onUpdate() {
             stopwatch = incapTimer.time + 1;
         },
         onEnd() {
+            matchData.incapLogs.push({
+                start: incapStart.toString(),
+                end: Date().toString(),
+                duration: Number(Date.parse(Date().toString())-Date.parse(incapStart)),
+            })
             incapTimer.reset();
             stopwatch = 0;
             isIncap = false;
@@ -65,6 +139,7 @@
         } else {
             points += 1;
         }
+        hasIntaked = false;
     }
 
     function scoreSpeaker() {
@@ -73,6 +148,7 @@
         } else {
             points += 2;
         }
+        hasIntaked = false;
     }
 
     function intake() {

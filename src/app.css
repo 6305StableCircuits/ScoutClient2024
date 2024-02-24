@@ -103,3 +103,7 @@
   display: grid;
   gap: var(--grid-gutter);
 }
+
+div[accesskey="inpts"]{
+  text-align: center;
+}
