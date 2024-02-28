@@ -2,71 +2,61 @@
 <script lang=ts>
 	import { goto } from "$app/navigation";
 	import { Timer } from "$lib/classes/Timer";
+    import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
+    let team = 0;
+    let round = 0;
+    let allianceColor = "";
+    let scouter = "";
+    var duplicheck = 0;
+    var inSave = false;
+    let saveData: any;
+    let id = Date.now();
     let matchData = {
-        team: "",
-        scouter: "",
-        color: "",
-        startTime: Date(),
-        score: Number,
+        id: id,
+        team: team,
+        scouter: scouter,
+        color: allianceColor,
+        round: round,
+        startTime: "",
+        score: 0,
         incapLogs:[
             {},
-            
         ],
         intakeLogs: [
             {},
-            
         ],
-    };
-    if(localStorage.getItem("pregameinfo") !== null){
-        goto('./preGameInfo');
-    }else{
-        var thing;
-        var pregameinfo;
-        //hey bro i heard you like sandboxing so i sandboxed your sandboxes
-        try{
-            try{
-            thing = localStorage.getItem("pregameinfo");
-            }catch(err){
-                thing = null;
-                goto('./preGameInfo');
+    }
+    savedData.subscribe(value => {
+        saveData = value;
+    })
+    teamNum.subscribe(value => {
+        team = value;
+        matchData.team = team;
+    });
+    roundNum.subscribe(value => {
+        round = value;
+        matchData.round = round;
+    });
+    alliance.subscribe(value=>{
+        allianceColor = value;
+        matchData.color = allianceColor;
+    });
+    scouterName.subscribe(value => {
+        scouter = value;
+        matchData.scouter =scouter;
+    })
+    $: {
+        for(duplicheck = 0; duplicheck < saveData.length; duplicheck++){
+            if(saveData[duplicheck].id == id){
+                saveData[duplicheck] = matchData;
+                inSave = true;
+                break;
             }
-            try{
-            if(thing == null){
-                goto('./preGameInfo');
-            }else{
-                try{
-                pregameinfo = JSON.parse(thing);
-                }catch(err){
-                    pregameinfo = {};
-                    goto('./preGameInfo');
-                }
-                try{
-                    try{
-                        matchData.team = pregameinfo.team;
-                    }catch(err){
-                        goto('./preGameInfo');
-                    }
-                    try{
-                        matchData.color = pregameinfo.color;
-                    }catch(err){
-                        goto('./preGameInfo');
-                    }
-                    try{
-                        matchData.scouter = pregameinfo.scouter;
-                    }catch(err){
-                        goto('./preGameInfo');
-                    }
-                }catch(err){
-                    goto('./preGameInfo');
-                }
-                console.log(matchData);
-            }
-        }catch(err){
-            goto('./pregameInfo');
         }
-        }catch(err){
-            goto('./preGameInfo');
+        if(!inSave){
+            saveData.push(matchData);
         }
+        savedData.set(saveData);
     }
     
     var actions = [];
@@ -82,7 +72,9 @@
     let stopwatch: number = 0;
     let matchTimer = new Timer("matchTimer", {
         onStart() {
+            matchData.startTime = Date();
             matchStarted = true;
+            console.log(matchData)
         },
         onUpdate() {
             timeRemaining = matchTime - (matchTimer.time + 1);
@@ -150,10 +142,14 @@
         }
         hasIntaked = false;
     }
-
-    function intake() {
+    
+    function intake(type: number) {
         hasIntaked = true;
+        matchData.intakeLogs.push({
+            type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
+        });
     }
+
 </script>
 
 <div class="bg-black-olive h-screen">
@@ -173,8 +169,8 @@
     </div>
     {#if !hasIntaked}
     <div class="flex pt-sm items-center justify-center">
-        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85" on:click={intake}>Ground Intake</button>
-        <button disabled={autoInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85" on:click={intake}>Source Intake</button>
+        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(1)}}>Ground Intake</button>
+        <button disabled={autoInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(0)}}>Source Intake</button>
     </div>
     {/if}
     {#if hasIntaked}
