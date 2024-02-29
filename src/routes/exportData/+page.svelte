@@ -29,6 +29,10 @@
                 datastuff.intakeLogs[fixintake] = JSON.stringify(datastuff.intakeLogs[fixintake]);
             }
             datastuff.intakeLogs = datastuff.intakeLogs.join('<br>');
+            for(var incapfix = 0; incapfix < datastuff.incapLogs.length; incapfix++){
+                datastuff.incapLogs[incapfix] = JSON.stringify(datastuff.incapLogs[incapfix]);
+            }
+            datastuff.incapLogs = datastuff.incapLogs.join('<br>');
             createElem.innerHTML+=JSON.stringify(datastuff);
 
             dataElem.push(createElem);
