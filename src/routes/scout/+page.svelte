@@ -7,6 +7,7 @@
     let round = 0;
     let allianceColor = "";
     let scouter = "";
+    let matchFinished = false;
     var duplicheck = 0;
     var inSave = false;
     let saveData: any;
@@ -72,9 +73,9 @@
     let stopwatch: number = 0;
     let matchTimer = new Timer("matchTimer", {
         onStart() {
-            matchData.startTime = Date();
+            matchData.startTime = Date().toLocaleString();
             matchStarted = true;
-            console.log(matchData)
+            console.log(matchData);
         },
         onUpdate() {
             timeRemaining = matchTime - (matchTimer.time + 1);
@@ -94,12 +95,13 @@
         },
         onEnd() {
             matchStarted = false;
+            matchFinished = true;
         }
     });
     let incapStart = "";
     let incapTimer = new Timer("incapTimer", {
         onStart() {
-            incapStart = Date();
+            incapStart = Date().toLocaleString();
             isIncap = true;
         },
         onUpdate() {
@@ -108,8 +110,8 @@
         onEnd() {
             matchData.incapLogs.push({
                 start: incapStart.toString(),
-                end: Date().toString(),
-                duration: Number(Date.parse(Date().toString())-Date.parse(incapStart)),
+                end: Date().toLocaleString().toString(),
+                duration: Number(Date.parse(Date().toLocaleString().toString())-Date.parse(incapStart)),
             })
             incapTimer.reset();
             stopwatch = 0;
@@ -159,27 +161,30 @@
     </div>
     <div class="flex pt-sm items-center justify-center">
         {#if !matchStarted}
-        <button class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
+        <button disabled={matchFinished} class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
         {/if}
-        {#if matchStarted}
+        {#if matchStarted&&!matchFinished}
         <div class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl" id="matchTimer">
             {matchPhase} | {Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}
         </div>
         {/if}
     </div>
-    {#if !hasIntaked}
+    {#if matchStarted}
+    {#if !hasIntaked&&!matchFinished}
     <div class="flex pt-sm items-center justify-center">
         <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(1)}}>Ground Intake</button>
         <button disabled={autoInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(0)}}>Source Intake</button>
     </div>
     {/if}
-    {#if hasIntaked}
+    {/if}
+    {#if matchStarted&&hasIntaked&&!matchFinished}
     <div class="flex pt-sm items-center justify-center">
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85" on:click={scoreAmp}>Amp Score</button>
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm" on:click={scoreSpeaker}>Speaker Score</button>
     </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
+        {#if matchStarted&&!matchFinished}
         {#if !isIncap}
         <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click={() => incapTimer.start()}>Start Incap</button>
         {/if}
@@ -193,7 +198,10 @@
         {/if}
         {#if matchPhase == "Teleop"}
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Climb</button>
-        {/if}         
+        {/if} 
+        {/if}        
     </div>
-    <h1 class="text-8xl text-floral-white">{points}</h1>
+    <center>
+        <h1 class="text-8xl text-floral-white">{points}</h1>
+    </center>
 </div>

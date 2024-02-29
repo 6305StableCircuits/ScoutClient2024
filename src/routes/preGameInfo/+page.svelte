@@ -23,7 +23,7 @@
         <h1 class="text-8xl text-center font-bold text-eerie-black dark:text-floral-white">Pregame Info</h1>
     </div>
     <div class="w-full h-full bg-floral-white dark:bg-black-olive" accesskey="inpts">
-        <label for="team">Team</label>&nbsp;&nbsp;<input type="number" bind:value={team} name="team" min="0" max="99999">""<br>
+        <label for="team">Team</label>&nbsp;&nbsp;<input type="number" bind:value={team} name="team" min="0" max="99999"><br>
         <label for="scouter">Scouter Name</label>&nbsp;&nbsp;<input type="text" bind:value={scouter} name="scouter" autocorrect="false"><br>
         <label for="round">Round</label>&nbsp;&nbsp;<input type="number" bind:value={round} name="round"><br>
         <label for="color">Color</label>&nbsp;&nbsp;<select name="color" bind:value={color}><option>Red</option><option>Blue</option></select><br>
