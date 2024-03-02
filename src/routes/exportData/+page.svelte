@@ -1,6 +1,7 @@
 <script lang=ts>
     import { goto } from "$app/navigation";
     import {onMount} from 'svelte';
+    import {asLongAs} from '$lib/aslongas';
     import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
     let saveData: any;
     let saveDataMod:any;
@@ -8,9 +9,9 @@
         saveData = value;
     });
     $: {
-        if(saveDataMod == undefined || saveDataMod == null){
+        asLongAs(saveDataMod == undefined || saveDataMod == null, function(){
             saveDataMod = saveData;
-        }
+        })
     }
     const sendData = function(){
 

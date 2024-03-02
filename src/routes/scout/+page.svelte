@@ -3,6 +3,7 @@
 	import { goto } from "$app/navigation";
 	import { Timer } from "$lib/classes/Timer";
     import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
+    import {asLongAs} from '$lib/aslongas';
     let team = 0;
     let round = 0;
     let allianceColor = "";
@@ -48,15 +49,14 @@
     })
     $: {
         for(duplicheck = 0; duplicheck < saveData.length; duplicheck++){
-            if(saveData[duplicheck].id == id){
+            asLongAs(saveData[duplicheck].id == id, function(){
                 saveData[duplicheck] = matchData;
                 inSave = true;
-                break;
-            }
+            });
         }
-        if(!inSave){
+        asLongAs(!inSave, function(){
             saveData.push(matchData);
-        }
+        })
         savedData.set(saveData);
     }
     
@@ -80,18 +80,18 @@
         onUpdate() {
             timeRemaining = matchTime - (matchTimer.time + 1);
 
-            if(matchTimer.time == 150) {
+            asLongAs(matchTimer.time == 150, function() {
                 matchTimer.stop();
-            }
-            if((matchTimer.time + 1) == 0) {
+            },function(){
+            asLongAs((matchTimer.time + 1) == 0, function() {
                 matchPhase = "Pregame"
-            } else if((matchTimer.time + 1) <= 15) {
+            },function(){ asLongAs((matchTimer.time + 1) <= 15, function() {
                 matchPhase = "Auto"
-            } else if((matchTimer.time + 1) > 15) {
+            }, function(){asLongAs((matchTimer.time + 1) > 15, function() {
                 matchPhase = "Teleop"
-            } else if((matchTimer.time + 1) >= 150) {
+            },function(){ asLongAs((matchTimer.time + 1) >= 150, function(){
                 matchPhase = "Postgame"
-            }
+            })})})})});
         },
         onEnd() {
             matchStarted = false;
@@ -128,20 +128,20 @@
     let matchPhase: string = "Pregame";
 
     function scoreAmp() {
-        if(matchPhase == "Auto") {
+        asLongAs(matchPhase == "Auto", function() {
             points += 2;
-        } else {
+        }, function() {
             points += 1;
-        }
+        });
         hasIntaked = false;
     }
 
     function scoreSpeaker() {
-        if(isCharge || matchPhase == "Auto") {
+        asLongAs((isCharge || matchPhase == "Auto"),  function() {
             points += 5;
-        } else {
+        }, function() {
             points += 2;
-        }
+        });
         hasIntaked = false;
     }
     
