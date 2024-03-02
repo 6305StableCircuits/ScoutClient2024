@@ -104,6 +104,6 @@
   gap: var(--grid-gutter);
 }
 
-div[accesskey="inpts"]{
+div[id="inpts"]{
   text-align: center;
 }

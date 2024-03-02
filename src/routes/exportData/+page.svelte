@@ -26,6 +26,12 @@
             createElem.id = i.toString();
             createElem.innerHTML = `<input type='checkbox' checked onclick="document.getElementById('${i.toString}').disabled = !this.checked">`;
             datastuff = saveData[i];
+            var translate = "";
+            translate+="<span>" + datastuff.id + "</span><br><span>" + datastuff.startTime + "</span><br>";
+            translate+="<span>" + datastuff.team + "</span><br>";
+            translate+="<span>" + datastuff.round + "</span><br>";
+            translate+="<span>" + datastuff.scouter + "</span><br>";
+            translate+="<span>" + datastuff.color + "</span><br>";
             for(var fixintake = 0; fixintake < datastuff.intakeLogs.length; fixintake++){
                 datastuff.intakeLogs[fixintake] = JSON.stringify(datastuff.intakeLogs[fixintake]);
             }
@@ -34,7 +40,9 @@
                 datastuff.incapLogs[incapfix] = JSON.stringify(datastuff.incapLogs[incapfix]);
             }
             datastuff.incapLogs = datastuff.incapLogs.join('<br>');
-            createElem.innerHTML+=JSON.stringify(datastuff);
+            translate+="<h3>Intake Logs</h3>"+datastuff.intakeLogs + "<br>";
+            translate+="<h3>Incap Logs</h3>"+datastuff.incapLogs + "<br>";
+            createElem.innerHTML+=translate;
 
             dataElem.push(createElem);
             (document.querySelector('div[id=data]')||{appendChild: (thing: any)=>{return thing||false;}}).appendChild(createElem);

@@ -156,7 +156,7 @@
 
 <div class="bg-black-olive h-screen">
     <div class="flex pt-sm items-center justify-center">
-        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Undo</button>
+        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={()=>{process.exit(0)}}>Close Server</button>
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Redo</button>
     </div>
     <div class="flex pt-sm items-center justify-center">
