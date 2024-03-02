@@ -79,7 +79,6 @@
         },
         onUpdate() {
             timeRemaining = matchTime - (matchTimer.time + 1);
-
             asLongAs(matchTimer.time == 150, function() {
                 matchTimer.stop();
             },function(){
