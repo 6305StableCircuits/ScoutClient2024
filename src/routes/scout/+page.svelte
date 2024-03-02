@@ -152,7 +152,25 @@
             type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
         });
     }
-
+    let harmonyInteract = false;
+    /*$:  if(harmonyInteract){ 
+    if(matchData.harmony){
+        points+=2;
+    }else if(!matchData.harmony){
+        points-=2;
+    }
+}*/
+const harmony = function(e: any){
+    matchData.harmony = e.target.checked;
+    if(!harmonyInteract && matchData.harmony){
+        points+=2;
+    }else if(harmonyInteract && !matchData.harmony){
+        points-=2;
+    }else if(harmonyInteract && matchData.harmony){
+        points+=2;
+    }
+    harmonyInteract = true;
+}
 </script>
 
 <div class="bg-black-olive h-screen">
@@ -204,7 +222,7 @@
         {/if}
         {#if matchPhase == "Teleop"}
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={() => {matchData.climb = true}}>Climb</button>
-        <input type="checkbox" name="harmony" bind:checked={matchData.harmony}>
+        <input type="checkbox" name="harmony" on:click={(event) => {harmony(event);}}>
         <label for="harmony"> Harmony</label>
         {/if} 
         {/if}        
