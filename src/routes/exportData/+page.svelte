@@ -23,28 +23,29 @@
         var datastuff;
         //Doesn't display more than one dataset at a time
         for(var i = 0; i < saveData.length; i++){
-            createElem = document.createElement("li");
+            createElem = document.createElement("div");
             createElem.id = i.toString();
-            createElem.innerHTML = `<input type='checkbox' checked onclick="document.getElementById('${i.toString}').disabled = !this.checked">`;
+            createElem.innerHTML = `<input type='checkbox' name='data${i.toString()}' checked onclick="document.getElementById('${i.toString()}').disabled = !this.checked">`;
             datastuff = saveData[i];
-            var translate = "";
-            translate+="<span>ID: " + datastuff.id + "</span><br><span>Start Time: " + datastuff.startTime + "</span><br>";
-            translate+="<span>Team: " + datastuff.team + "</span><br>";
-            translate+="<span>Round: " + datastuff.round + "</span><br>";
-            translate+="<span>Scouter: " + datastuff.scouter + "</span><br>";
-            translate+="<span>Alliance: " + datastuff.color + "</span><br>";
+            var translate = `<label for='data${i.toString()}'>`;
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: " + datastuff.id + "</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: " + datastuff.startTime + "</span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: " + datastuff.team + "</span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: " + datastuff.round + "</span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: " + datastuff.scouter + "</span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: " + datastuff.color + "</span><br>";
             for(var fixintake = 1; fixintake < datastuff.intakeLogs.length; fixintake++){
-                datastuff.intakeLogs[fixintake] = "<span>Type: " + datastuff.intakeLogs[fixintake].type + "</span>";
+                datastuff.intakeLogs[fixintake] = "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: " + datastuff.intakeLogs[fixintake].type + "</span>";
             }
             datastuff.intakeLogs.shift();
             datastuff.intakeLogs = datastuff.intakeLogs.join('<br>');
             for(var incapfix = 1; incapfix < datastuff.incapLogs.length; incapfix++){
-                datastuff.incapLogs[incapfix] = "<span>Start Time: " + datastuff.incapLogs[incapfix].start + "</span><br><span>End Time: " + datastuff.incapLogs[incapfix].end + "</span><br><span>Duration: " + datastuff.incapLogs[incapfix].duration + "</span>";
+                datastuff.incapLogs[incapfix] = "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: " + datastuff.incapLogs[incapfix].start + "</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Time: " + datastuff.incapLogs[incapfix].end + "</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + datastuff.incapLogs[incapfix].duration + "</span>";
             }
             datastuff.incapLogs.shift();
             datastuff.incapLogs = datastuff.incapLogs.join('<br>');
-            translate+="<h3>Intake Logs</h3>"+datastuff.intakeLogs + "<br>";
-            translate+="<h3>Incap Logs</h3>"+datastuff.incapLogs + "<br>";
+            translate+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p>"+datastuff.intakeLogs + "</p></details><br>";
+            translate+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Incap Logs</summary><p>"+datastuff.incapLogs + "</p></details><br>";
+            translate+="</label>";
             createElem.innerHTML+=translate;
 
             dataElem.push(createElem);
@@ -57,12 +58,14 @@
         list-style-type: none; /* Remove default bullet points */
     }
     li {
+        text-indent: 4em;
+        margin-left: 40px;
         display: flex; /* Align checkbox and text horizontally */
         align-items: center; /* Center vertically */
     }
-    input[type="checkbox"] {
-        margin-right: 10px; /* Add some spacing between checkbox and text */  
-    }
+    /*input[type="checkbox"] {
+        margin-right: 10px; 
+    }*/
     li.disabled {
         color: #888; /* Grayed out text color */
         pointer-events: none; /* Disable interactions */
