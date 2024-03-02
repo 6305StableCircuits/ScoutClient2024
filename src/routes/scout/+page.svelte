@@ -19,6 +19,8 @@
         scouter: scouter,
         color: allianceColor,
         round: round,
+        harmony: false,
+        climb: false,
         startTime: "",
         score: 0,
         incapLogs:[
@@ -201,7 +203,9 @@
         <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click={() => {points += 2}}>Leave</button>
         {/if}
         {#if matchPhase == "Teleop"}
-        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Climb</button>
+        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={() => {matchData.climb = true}}>Climb</button>
+        <input type="checkbox" name="harmony" bind:checked={matchData.harmony}>
+        <label for="harmony"> Harmony</label>
         {/if} 
         {/if}        
     </div>
