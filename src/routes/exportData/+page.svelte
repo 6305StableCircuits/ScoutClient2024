@@ -27,11 +27,11 @@
             createElem.innerHTML = `<input type='checkbox' checked onclick="document.getElementById('${i.toString}').disabled = !this.checked">`;
             datastuff = saveData[i];
             var translate = "";
-            translate+="<span>" + datastuff.id + "</span><br><span>" + datastuff.startTime + "</span><br>";
-            translate+="<span>" + datastuff.team + "</span><br>";
-            translate+="<span>" + datastuff.round + "</span><br>";
-            translate+="<span>" + datastuff.scouter + "</span><br>";
-            translate+="<span>" + datastuff.color + "</span><br>";
+            translate+="<span>ID: " + datastuff.id + "</span><br><span>Start Time: " + datastuff.startTime + "</span><br>";
+            translate+="<span>Team: " + datastuff.team + "</span><br>";
+            translate+="<span>Round: " + datastuff.round + "</span><br>";
+            translate+="<span>Scouter: " + datastuff.scouter + "</span><br>";
+            translate+="<span>Alliance: " + datastuff.color + "</span><br>";
             for(var fixintake = 1; fixintake < datastuff.intakeLogs.length; fixintake++){
                 datastuff.intakeLogs[fixintake] = "<span>Type: " + datastuff.intakeLogs[fixintake].type + "</span>";
             }
