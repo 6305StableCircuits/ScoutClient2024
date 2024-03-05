@@ -1,6 +1,5 @@
 In no particular order
 
-amp/speaker logs
 firebase (maybe)
 editing data in export page
 undo/redo

@@ -27,9 +27,12 @@
         incapLogs:[
             {},
         ],
-        intakeLogs: [
+        intakeLogs:[
             {},
         ],
+        shotLogs:[
+            {},
+        ]
     }
     savedData.subscribe(value => {
         saveData = value;
@@ -134,20 +137,22 @@
     let matchPhase: string = "Pregame";
 
     function scoreAmp() {
-        asLongAs(matchPhase == "Auto", function() {
+        asLongAs(matchPhase == "Auto" && hasIntaked, function() {
             points += 2;
         }, function() {
             points += 1;
         });
+        matchData.shotLogs.push({type:"amp"});
         hasIntaked = false;
     }
 
     function scoreSpeaker() {
-        asLongAs((isCharge || matchPhase == "Auto"),  function() {
+        asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
             points += 5;   
         }, function() {
             points += 2;
         });
+        matchData.shotLogs.push({type:"speaker"});
         hasIntaked = false;
     }
     
