@@ -4,6 +4,7 @@
 	import { Timer } from "$lib/classes/Timer";
     import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
     import {asLongAs} from '$lib/aslongas';
+	import Layout from "../+layout.svelte";
     let team = 0;
     let round = 0;
     let allianceColor = "";
@@ -119,6 +120,10 @@
             isIncap = false;
         }
     });
+
+    $: {
+        matchData.score = points;
+    }
     
     let autoInvalid = true;
     $: autoInvalid = matchPhase == "Auto" || matchPhase == "Pregame";
@@ -139,7 +144,7 @@
 
     function scoreSpeaker() {
         asLongAs((isCharge || matchPhase == "Auto"),  function() {
-            points += 5;
+            points += 5;   
         }, function() {
             points += 2;
         });

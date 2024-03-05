@@ -6,10 +6,10 @@
     var scouter = "";
     var round = 0;
     const saveData = function(){
-        teamNum.set(team);
+        teamNum.set(+team);
         alliance.set(color);
         scouterName.set(scouter);
-        roundNum.set(round);
+        roundNum.set(Math.abs(+round));
     }
 </script>
 <div class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">

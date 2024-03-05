@@ -33,6 +33,7 @@
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: " + datastuff.round + "</span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: " + datastuff.scouter + "</span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: " + datastuff.color + "</span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: " + datastuff.score + "</span><br>";
             datastuff.climb = datastuff.climb==undefined ? "false" : datastuff.climb.toString();
             datastuff.harmony = datastuff.harmony==undefined ? "false" : datastuff.harmony.toString();
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: " + (datastuff.climb) + "</span><br>";
