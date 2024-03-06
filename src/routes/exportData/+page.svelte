@@ -16,6 +16,15 @@
     const sendData = function(){
 
     }
+    let dialogRef: any;
+  
+    const editEvent = () => {
+      dialogRef.showModal();
+    };
+  
+    const closeDialog = () => {
+      dialogRef.close();
+    };
     onMount(() => {
         console.log(saveData);
         var dataElem = [];
@@ -63,6 +72,10 @@
             (document.querySelector('div[id=data]')||{appendChild: (thing: any)=>{return thing||false;}}).appendChild(createElem);
         }
     });
+    var span: any;
+    var btn: any;
+    var modal: any;
+    var body: any;
 </script>
 <style>
     ul {
@@ -81,8 +94,44 @@
         color: #888; /* Grayed out text color */
         pointer-events: none; /* Disable interactions */
     }
+
+    .modal {
+        display: none;
+        position: absolute; 
+        z-index: 999; 
+        padding-top: 100px;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        overflow: auto; 
+        background-color: rgba(0,0,0,0);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor:pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
 </style>
-<div class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">
+<div bind:this={body} class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">
     <div class="flex p-sm justify-center md:border-b-[16px] border-b-8 border-timberwolf dark:border-eerie-black text-wrap items-center relative">
         <button on:click={() => {window.location.href = ('/')}} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-3">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl-3xl h-3xl-3xl">
@@ -93,8 +142,21 @@
     </div>
     <div class="flex md:flex-row flex-col w-full flex-grow items-center bg-eerie-black dark:bg-floral-white">
         <div id="data">
+        </div>
+        <button id="myBtn" bind:this={btn} on:click={() => {modal.style.display = "block"}}>Open Modal</button>
+
+        <div id="myModal" class="modal" bind:this={modal}>
+
+        <div class="modal-content">
+            <span class="close" bind:this={span} on:click={() => {modal.style.display = "none"}}>&times;</span>
+            <p>Some text in the Modal..</p>
+        </div>
 
         </div>
         <!--<button on:click={() => {sendData()}} class="text-8xl w-full h-full border-timberwolf dark:border-eerie-black text-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center">Export Data</button>-->
     </div>
 </div>
+
+<!--/*if (event.target == modal) {
+    modal.style.display = "none";
+}*/-->
