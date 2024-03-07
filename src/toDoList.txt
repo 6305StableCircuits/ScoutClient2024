@@ -1,6 +1,6 @@
 In no particular order
 
-firebase (maybe)
-editing data in export page
+firebase
+save edited export data
 undo/redo
 Ui overhaul
