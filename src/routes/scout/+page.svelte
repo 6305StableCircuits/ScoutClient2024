@@ -228,7 +228,7 @@ const harmony = function(e: any){
         </button>
         {/if}
         {#if matchPhase == "Auto" || matchPhase == "Pregame"}
-        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click={() => {points += 2}}>Leave</button>
+        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click|once={() => {points += 2}}>Leave</button>
         {/if}
         {#if matchPhase == "Teleop"}
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={() => {matchData.climb = true}}>Climb</button>

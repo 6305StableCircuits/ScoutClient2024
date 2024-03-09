@@ -25,6 +25,118 @@
     const closeDialog = () => {
       dialogRef.close();
     };
+
+    const htmlToJson = function(html:string){
+        var json = {};
+        var id = html.split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: ")[1].split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ")[0];
+        var currentSplit = html.split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: ")[1].split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ");
+        currentSplit.shift();
+        currentSplit.join("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ").toString();
+        var startTime = (currentSplit as any as string).split("</span><br>")[0];
+        currentSplit = (currentSplit as any as string).split("</span><br>");
+        currentSplit.shift();
+        currentSplit.join("</span><br>");
+        var team = (currentSplit as any as string).split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable='true' class='editable'>")[1].split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>")[0];
+        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>");
+        currentSplit.shift();
+        currentSplit.join("");
+        var round = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>")[0];
+        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>");
+        currentSplit.shift();
+        currentSplit.join("");
+        var scouter = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>")[0];
+        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>");
+        currentSplit.shift();
+        currentSplit.join("");
+        var alliance = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>")[0];
+        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>");
+        currentSplit.shift();
+        currentSplit.join("");
+        var score = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>")[0];
+        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>");
+        currentSplit.shift();
+        currentSplit.join("");
+        var climbed = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>")[0];
+        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>");
+        currentSplit.shift();
+        currentSplit.join("");
+        (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+        currentSplit.shift();
+        currentSplit.join("");
+        var stuff = currentSplit;
+        var intakeLogs = [];
+        var incapLogs = [];
+        var shotLogs = [];
+        var intakeThing: any;
+        var incapThing: any;
+        var shotThing: any;
+        if(!stuff.includes("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p></p></details><br>")){
+            intakeThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+            intakeLogs.push(intakeThing);
+            while(stuff.includes("ground")||stuff.includes("source")){
+                (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+                currentSplit.shift();
+                currentSplit.join("");
+                stuff = currentSplit;
+                intakeThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+                intakeLogs.push({type: intakeThing});
+            }
+            (currentSplit as any as string).split("</span></p></details><br>");
+            currentSplit.shift();
+            currentSplit.join("</span></p></details><br>");
+            stuff = currentSplit;
+        }else{
+            (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p></details><br>");
+            currentSplit.shift();
+            try{
+                currentSplit.join("");
+            }catch(err){}
+            stuff = currentSplit;
+        }
+        if(!stuff.includes("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>")){
+            while(stuff.includes("amp")||stuff.includes("speaker")){
+                (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+                currentSplit.shift();
+                currentSplit.join("");
+                stuff = currentSplit;
+                shotThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+                shotLogs.push({type: shotThing}); 
+            }
+            (currentSplit as any as string).split("</span></p></details><br>");
+            currentSplit.shift();
+            currentSplit.join("</span></p></details><br>");
+            stuff = currentSplit;
+        }else{
+            (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>");
+            currentSplit.shift();
+            try{
+                currentSplit.join("");
+            }catch(err){}
+            stuff = currentSplit;
+        }
+        if(!stuff.includes("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Incap Logs</summary><p></p></details><br>")){
+            while(stuff.includes("duration")){
+                (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+                currentSplit.shift();
+                currentSplit.join("");
+                stuff = currentSplit;
+                shotThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+                shotLogs.push({type: shotThing}); 
+            }
+            (currentSplit as any as string).split("</span></p></details><br>");
+            currentSplit.shift();
+            currentSplit.join("</span></p></details><br>");
+            stuff = currentSplit;
+        }else{
+            (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>");
+            currentSplit.shift();
+            try{
+                currentSplit.join("");
+            }catch(err){}
+            stuff = currentSplit;
+        }
+    }
+
     onMount(() => {
         console.log(saveData);
         var dataElem = [];
