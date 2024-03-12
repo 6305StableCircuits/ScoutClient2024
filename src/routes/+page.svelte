@@ -12,7 +12,7 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
   .then(response => response.json())
   .then(response => console.log(response))
   .catch(err => console.error(err));*/
-<<<<<<< HEAD
+
  /* const options = {
 =======
   /*const options = {
@@ -47,13 +47,8 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
 .then(data => console.log(data))
 .catch(error => {
     console.error('Error occurred: ' + error);
-<<<<<<< HEAD
-});
-*/
-=======
 });*/
 
->>>>>>> f681772f7af7c91226c454ce5e63c16e448d2025
 </script>
 
 <div class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">
