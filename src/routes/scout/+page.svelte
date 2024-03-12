@@ -183,13 +183,15 @@ const harmony = function(e: any){
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>              
     </button>
-    <div class="flex pt-sm items-center justify-center">
-        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Undo</button>
-        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Redo</button>
-    </div>
+    {#if matchStarted}
+        <div class="flex pt-sm items-center justify-center">
+            <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Undo</button>
+            <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]">Redo</button>
+        </div>
+    {/if}
     <div class="flex pt-sm items-center justify-center">
         {#if !matchStarted}
-        <button disabled={matchFinished} class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
+        <button disabled={matchFinished} class="text-4xl text-floral-white text-center justify-center bg-eerie-black px-md py-sm rounded-2xl disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
         {/if}
         {#if matchStarted&&!matchFinished}
         <div class="text-4xl text-floral-white text-center bg-eerie-black px-md py-sm rounded-2xl" id="matchTimer">
@@ -231,7 +233,4 @@ const harmony = function(e: any){
         {/if} 
         {/if}        
     </div>
-    <center>
-        <h1 class="text-8xl text-floral-white">Team{team}: {points}</h1>
-    </center>
 </div>
