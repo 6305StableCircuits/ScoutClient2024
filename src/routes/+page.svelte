@@ -12,11 +12,11 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
   .then(response => response.json())
   .then(response => console.log(response))
   .catch(err => console.error(err));*/
-  const options = {
+  /*const options = {
   method: 'POST',
   headers: {'Content-Type': 'application/x-www-form-urlencoded','Access-Control-Allow-Origin': "*", 'Access-Control-Allow-Credentials': 'true'},
   body: new URLSearchParams({}),
-};
+};*/
 
 /*fetch('https://6305.airofan.com/Matches/getMatches', options)
   .then(response => response.json())
