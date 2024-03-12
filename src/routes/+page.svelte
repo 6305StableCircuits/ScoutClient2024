@@ -12,11 +12,11 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
   .then(response => response.json())
   .then(response => console.log(response))
   .catch(err => console.error(err));*/
-  const options = {
+ /* const options = {
   method: 'POST',
   headers: {'Content-Type': 'application/x-www-form-urlencoded','Access-Control-Allow-Origin': "*", 'Access-Control-Allow-Credentials': 'true'},
   body: new URLSearchParams({}),
-};
+};*/
 
 /*fetch('https://6305.airofan.com/Matches/getMatches', options)
   .then(response => response.json())
@@ -24,7 +24,7 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
   .catch(err => {});*/
   /*var matchTypes = ["Qualification","Quarter Final","Semi Final","Final"];
   var matchType = "Practice";*/
-  var urls = {
+  /*var urls = {
     //matches: "https://frc-api.firstinspires.org/v3.0/2024/schedule/CAAV?tournamentLevel="+matchType,
     teams: "https://api.statbotics.io/v2/team_events/event/2024cafr"
   }
@@ -44,7 +44,7 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
 .catch(error => {
     console.error('Error occurred: ' + error);
 });
-
+*/
 </script>
 
 <div class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">

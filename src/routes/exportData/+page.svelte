@@ -27,114 +27,165 @@
     };
 
     const htmlToJson = function(html:string){
-        var json = {};
-        var id = html.split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: ")[1].split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ")[0];
+        var json = {
+            team: 0,
+            id: 0,
+            scouter: "",
+            round: 0,
+            startTime: "",
+            color: "",
+            score: 0,
+            harmony: false,
+            climbed: false,
+            incapLogs: [
+                {
+                    start: "",
+                    end: "",
+                    duration: 0,
+                }
+            ],
+            intakeLogs: [
+                {type: ""}
+            ],
+            shotLogs: [
+                {type: ""}
+            ],
+        };
+        var currentSplitString: any;
+        var id = +(html.split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: ")[1].split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ")[0]);
         var currentSplit = html.split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: ")[1].split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ");
         currentSplit.shift();
-        currentSplit.join("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ").toString();
-        var startTime = (currentSplit as any as string).split("</span><br>")[0];
-        currentSplit = (currentSplit as any as string).split("</span><br>");
+        currentSplitString = currentSplit.join("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ");
+        var startTime = (currentSplitString).split("</span><br>")[0];
+        currentSplit = (currentSplitString).split("</span><br>");
         currentSplit.shift();
-        currentSplit.join("</span><br>");
-        var team = (currentSplit as any as string).split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable='true' class='editable'>")[1].split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>")[0];
-        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>");
+        currentSplitString = currentSplit.join("</span><br>");
+        console.log(currentSplitString);
+        console.log((currentSplitString).split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable='true' class='editable'>").join("").split('<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable="true" class="editable">')[1]);
+        var team = +((currentSplitString).split("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable='true' class='editable'>").join("").split('<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable="true" class="editable">')[1].split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>")[0]);
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>");
         currentSplit.shift();
-        currentSplit.join("");
-        var round = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>")[0];
-        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>");
+        currentSplitString = currentSplit.join("");
+        var round = +((currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>")[0]);
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>");
         currentSplit.shift();
-        currentSplit.join("");
-        var scouter = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>")[0];
-        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>");
+        currentSplitString = currentSplit.join("");
+        var scouter = (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>")[0];
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>");
         currentSplit.shift();
-        currentSplit.join("");
-        var alliance = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>")[0];
-        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>");
+        currentSplitString = currentSplit.join("");
+        var alliance = (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>")[0];
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>");
         currentSplit.shift();
-        currentSplit.join("");
-        var score = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>")[0];
-        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>");
+        currentSplitString = currentSplit.join("");
+        var score = (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>")[0];
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>");
         currentSplit.shift();
-        currentSplit.join("");
-        var climbed = (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>")[0];
-        (currentSplit as any as string).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>");
+        currentSplitString = currentSplit.join("");
+        var climbed = (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>")[0];
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>");
         currentSplit.shift();
-        currentSplit.join("");
-        (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+        currentSplitString = currentSplit.join("");
+        var harmony = (currentSplitString).split("</span></span><br><span>")[0];
+        (currentSplitString).split("</span></span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
         currentSplit.shift();
-        currentSplit.join("");
+        currentSplitString = currentSplit.join("");
         var stuff = currentSplit;
         var intakeLogs = [];
         var incapLogs = [];
         var shotLogs = [];
         var intakeThing: any;
         var incapThing: any;
+        var incapThing1: any;
+        var incapThing2: any;
         var shotThing: any;
         if(!stuff.includes("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p></p></details><br>")){
-            intakeThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+            intakeThing = (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
             intakeLogs.push(intakeThing);
             while(stuff.includes("ground")||stuff.includes("source")){
-                (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+                (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
                 currentSplit.shift();
-                currentSplit.join("");
+                currentSplitString = currentSplit.join("");
                 stuff = currentSplit;
-                intakeThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+                intakeThing = (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
                 intakeLogs.push({type: intakeThing});
             }
-            (currentSplit as any as string).split("</span></p></details><br>");
+            (currentSplitString).split("</span></p></details><br>");
             currentSplit.shift();
-            currentSplit.join("</span></p></details><br>");
+            currentSplitString = currentSplit.join("</span></p></details><br>");
             stuff = currentSplit;
         }else{
-            (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p></details><br>");
+            (currentSplitString).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p></details><br>");
             currentSplit.shift();
             try{
-                currentSplit.join("");
+                currentSplitString = currentSplit.join("");
             }catch(err){}
             stuff = currentSplit;
         }
         if(!stuff.includes("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>")){
             while(stuff.includes("amp")||stuff.includes("speaker")){
-                (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+                (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
                 currentSplit.shift();
-                currentSplit.join("");
+                currentSplitString = currentSplit.join("");
                 stuff = currentSplit;
-                shotThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
+                shotThing = (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
                 shotLogs.push({type: shotThing}); 
             }
-            (currentSplit as any as string).split("</span></p></details><br>");
+            (currentSplitString).split("</span></p></details><br>");
             currentSplit.shift();
-            currentSplit.join("</span></p></details><br>");
+            currentSplitString = currentSplit.join("</span></p></details><br>");
             stuff = currentSplit;
         }else{
-            (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>");
+            (currentSplitString).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>");
             currentSplit.shift();
             try{
-                currentSplit.join("");
+                currentSplitString = currentSplit.join("");
             }catch(err){}
             stuff = currentSplit;
         }
         if(!stuff.includes("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Incap Logs</summary><p></p></details><br>")){
             while(stuff.includes("duration")){
-                (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ");
+                (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Duration: ");
                 currentSplit.shift();
-                currentSplit.join("");
+                currentSplitString = currentSplit.join("");
                 stuff = currentSplit;
-                shotThing = (currentSplit as any as string).split("</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: ")[0];
-                shotLogs.push({type: shotThing}); 
+                incapThing2 = (currentSplitString).split(" seconds</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ")[0];
+                (currentSplitString).split(" seconds</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: ");
+                currentSplit.shift();
+                currentSplitString = currentSplit.join("");
+                stuff = currentSplit;
+                incapThing = (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Time: ")[0];
+                (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Time: ");
+                currentSplit.shift();
+                currentSplitString = currentSplit.join("");
+                stuff = currentSplit;
+                incapThing1 = (currentSplitString).split("</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Duration: ")[0];
+                incapLogs.push({start: incapThing, end: incapThing1, duration: incapThing2}); 
             }
-            (currentSplit as any as string).split("</span></p></details><br>");
+            (currentSplitString).split("</span></p></details><br>");
             currentSplit.shift();
-            currentSplit.join("</span></p></details><br>");
+            currentSplitString = currentSplit.join("</span></p></details><br>");
             stuff = currentSplit;
         }else{
-            (currentSplit as any as string).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>");
+            (currentSplitString).split("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Shot Logs</summary><p></p></details><br>");
             currentSplit.shift();
             try{
-                currentSplit.join("");
+                currentSplitString = currentSplit.join("");
             }catch(err){}
             stuff = currentSplit;
         }
+        json.team = team;
+        json.id = id;
+        json.scouter = scouter;
+        json.score = +score;
+        json.incapLogs = incapLogs;
+        json.shotLogs = shotLogs;
+        json.intakeLogs = intakeLogs;
+        json.round = round;
+        json.harmony = !!harmony;
+        json.climbed = !!climbed;
+        json.color = alliance;
+        return json;
     }
 
     onMount(() => {
@@ -142,21 +193,24 @@
         var dataElem = [];
         var createElem;
         var datastuff;
-        //Doesn't display more than one dataset at a time
+        var scheiße;
+        var schwanz;
         for(var i = 0; i < saveData.length; i++){
             createElem = document.createElement("div");
             createElem.id = i.toString();
-            createElem.innerHTML = `<input type='checkbox' name='data${i.toString()}' checked onclick="document.getElementById('${i.toString()}').disabled = !this.checked">`;
-            datastuff = saveData[i];
-            var translate = `<label for='data${i.toString()}'>`;
+            createElem.innerHTML = `<input type='checkbox' name='data${i}' checked onclick="document.getElementById('${i}').disabled = !this.checked">`;
+            scheiße = JSON.parse(JSON.stringify(saveData[i])); //for some reason variables bind to each other
+            schwanz = scheiße;
+            datastuff = schwanz;
+            var translate = `<label for='data${i}'>`;
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: " + datastuff.id + "</span><br><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start Time: " + datastuff.startTime + "</span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Team: <span contenteditable='true' class='editable'>" + datastuff.team + "</span></span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round: <span contenteditable='true' class='editable'>" + datastuff.round + "</span></span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scouter: <span contenteditable='true' class='editable'>" + datastuff.scouter + "</span></span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alliance: <span contenteditable='true' class='editable'>" + datastuff.color + "</span></span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>" + datastuff.score + "</span></span><br>";
-            datastuff.climb = datastuff.climb==undefined ? "false" : datastuff.climb.toString();
-            datastuff.harmony = datastuff.harmony==undefined ? "false" : datastuff.harmony.toString();
+            datastuff.climb = datastuff.climb==undefined ? "false" : datastuff.climb;
+            datastuff.harmony = datastuff.harmony==undefined ? "false" : datastuff.harmony;
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>" + (datastuff.climb) + "</span></span><br>";
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>" + (datastuff.harmony) + "</span></span><br>";
             for(var fixintake = 1; fixintake < datastuff.intakeLogs.length; fixintake++){
@@ -179,7 +233,9 @@
             translate+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Incap Logs</summary><p>"+datastuff.incapLogs + "</p></details><br>";
             translate+="</label>";
             createElem.innerHTML+=translate;
-
+            try{
+            console.log(htmlToJson(createElem.innerHTML));
+            }catch(err){console.log(err)}
             dataElem.push(createElem);
             modalStuffData.appendChild(createElem);
         }

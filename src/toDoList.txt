@@ -4,3 +4,4 @@ firebase
 save edited export data
 undo/redo
 Ui overhaul
+Fix climb and harmony bug

@@ -2,12 +2,14 @@
 <script lang=ts>
 	import { goto } from "$app/navigation";
 	import { Timer } from "$lib/classes/Timer";
+    import { get } from 'svelte/store';
     import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
     import {asLongAs} from '$lib/aslongas';
 	import Layout from "../+layout.svelte";
     let team = 0;
     let round = 0;
     let allianceColor = "";
+    let points: number = 0;
     let scouter = "";
     let matchFinished = false;
     var duplicheck = 0;
@@ -37,35 +39,27 @@
     savedData.subscribe(value => {
         saveData = value;
     })
-    teamNum.subscribe(value => {
-        team = value;
-        matchData.team = team;
-    });
-    roundNum.subscribe(value => {
-        round = value;
-        matchData.round = round;
-    });
-    alliance.subscribe(value=>{
-        allianceColor = value;
-        matchData.color = allianceColor;
-    });
-    scouterName.subscribe(value => {
-        scouter = value;
-        matchData.scouter =scouter;
-    })
+    team = get(teamNum);
+    matchData.team = team;
+    round = get(roundNum);
+    matchData.round = round;
+    allianceColor = get(alliance);
+    matchData.color = allianceColor;
+    scouter = get(scouterName);
+    matchData.scouter = scouter;
     $: {
         for(duplicheck = 0; duplicheck < saveData.length; duplicheck++){
-            asLongAs(saveData[duplicheck].id == id, function(){
+            if(saveData[duplicheck].id == matchData.id){
                 saveData[duplicheck] = matchData;
                 inSave = true;
-            });
+                break;
+            }
         }
-        asLongAs(!inSave, function(){
+        if(!inSave){
             saveData.push(matchData);
-        })
+        }
         savedData.set(saveData);
     }
-    
     var actions = [];
     let matchStarted: Boolean = false;
     let matchTime: number = 150;
@@ -74,7 +68,6 @@
     let endIncap: number;
     let hasIntaked: Boolean = false;
     let isCharge: Boolean = false;
-    let points: number = 0;
     let timeRemaining = 150;
     let stopwatch: number = 0;
     let matchTimer = new Timer("matchTimer", {
@@ -123,10 +116,6 @@
             isIncap = false;
         }
     });
-
-    $: {
-        matchData.score = points;
-    }
     
     let autoInvalid = true;
     $: autoInvalid = matchPhase == "Auto" || matchPhase == "Pregame";
@@ -142,6 +131,7 @@
         }, function() {
             points += 1;
         });
+        matchData.score = points;
         matchData.shotLogs.push({type:"amp"});
         hasIntaked = false;
     }
@@ -152,6 +142,7 @@
         }, function() {
             points += 2;
         });
+        matchData.score = points;
         matchData.shotLogs.push({type:"speaker"});
         hasIntaked = false;
     }
@@ -163,13 +154,15 @@
         });
     }
     let harmonyInteract = false;
-    /*$:  if(harmonyInteract){ 
-    if(matchData.harmony){
-        points+=2;
-    }else if(!matchData.harmony){
-        points-=2;
-    }
-}*/
+    $:  if(harmonyInteract){ 
+            if(matchData.harmony == true){
+                points+=2;
+                matchData.score = points;
+            }else if(matchData.harmony == false){
+                points-=2;
+                matchData.score = points;
+            }
+        }
 const harmony = function(e: any){
     matchData.harmony = e.target.checked;
     if(!harmonyInteract && matchData.harmony){
@@ -179,6 +172,7 @@ const harmony = function(e: any){
     }else if(harmonyInteract && matchData.harmony){
         points+=2;
     }
+    matchData.score = points;
     harmonyInteract = true;
 }
 </script>
@@ -228,7 +222,7 @@ const harmony = function(e: any){
         </button>
         {/if}
         {#if matchPhase == "Auto" || matchPhase == "Pregame"}
-        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click|once={() => {points += 2}}>Leave</button>
+        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click|once={() => {points += 2; matchData.score = points}}>Leave</button>
         {/if}
         {#if matchPhase == "Teleop"}
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={() => {matchData.climb = true}}>Climb</button>
@@ -238,6 +232,6 @@ const harmony = function(e: any){
         {/if}        
     </div>
     <center>
-        <h1 class="text-8xl text-floral-white">{points}</h1>
+        <h1 class="text-8xl text-floral-white">Team{team}: {points}</h1>
     </center>
 </div>
