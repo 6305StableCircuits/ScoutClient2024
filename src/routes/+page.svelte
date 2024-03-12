@@ -24,7 +24,7 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
   .catch(err => {});*/
   /*var matchTypes = ["Qualification","Quarter Final","Semi Final","Final"];
   var matchType = "Practice";*/
-  var urls = {
+  /*var urls = {
     //matches: "https://frc-api.firstinspires.org/v3.0/2024/schedule/CAAV?tournamentLevel="+matchType,
     teams: "https://api.statbotics.io/v2/team_events/event/2024cafr"
   }
@@ -43,7 +43,7 @@ fetch('https://6305.airofan.com/Matches/getMatches', options)
 .then(data => console.log(data))
 .catch(error => {
     console.error('Error occurred: ' + error);
-});
+});*/
 
 </script>
 
