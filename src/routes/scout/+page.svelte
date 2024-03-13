@@ -26,6 +26,7 @@
         climb: false,
         startTime: "",
         score: 0,
+        left: false,
         incapLogs:[
             {},
         ],
@@ -61,6 +62,32 @@
         savedData.set(saveData);
     }
     var actions = [];
+    var actionTypes = {
+        toggleHarmony: {
+            eval: "matchData.harmony = !matchData.harmony",
+            redo: "matchData.harmony = !matchData.harmony"
+        },
+        toggleClimb: {
+            eval: "matchData.climb = !matchData.climb",
+            redo: "matchData.climb = !matchData.climb"
+        },
+        doIntake: {
+            eval: "intakeUndo.push(matchData.intakeLogs.pop());",
+            redo: "matchData.intakeLogs.push(intakeUndo.pop());"
+        },
+        doIncap: {
+            eval: "incapUndo.push(matchData.incapLogs.pop());",
+            redo: "matchData.incapLogs.push(incapUndo.pop());"
+        },
+        doShot: {
+            eval: "shotUndo.push(matchData.shotLogs.pop());",
+            redo: "matchData.shotLogs.push(shotUndo.pop());"
+        }
+    }
+    var incapUndo = [];
+    var shotUndo = [];
+    var intakeUndo = [];
+    var shotHistory = [];
     let matchStarted: Boolean = false;
     let matchTime: number = 150;
     let isIncap: Boolean = false;
@@ -131,6 +158,7 @@
         }, function() {
             points += 1;
         });
+        
         matchData.score = points;
         matchData.shotLogs.push({type:"amp"});
         hasIntaked = false;
@@ -163,20 +191,42 @@
                 matchData.score = points;
             }
         }
-const harmony = function(e: any){
-    matchData.harmony = e.target.checked;
-    if(!harmonyInteract && matchData.harmony){
-        points+=2;
+const harmony = function(e: boolean){
+    matchData.harmony = e;
+    /*if(!harmonyInteract && matchData.harmony){
+        points+=1;
     }else if(harmonyInteract && !matchData.harmony){
-        points-=2;
+        points-=1;
     }else if(harmonyInteract && matchData.harmony){
-        points+=2;
-    }
+        points+=1;
+    }*/
     matchData.score = points;
     harmonyInteract = true;
 }
-</script>
+var climbBtn:any;
+$: {
+    if(matchData.harmony == true){
+        climbBtn.style["background-color"]="rgb(4, 201, 7)";
+    }else if(matchData.climb == true){
+        climbBtn.style["background-color"]="rgb(214, 4, 4)";
+    }
+}
+const undo = function(){
 
+}
+const redo = function(){
+
+}
+</script>
+<style>
+    label {
+        white-space:nowrap;
+        font-size: scale(0.5);
+    }
+    button{
+        cursor: pointer;
+    }
+</style>
 <div class="bg-black-olive h-screen">
     <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-3">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl-3xl h-2xl-3xl">
@@ -224,13 +274,14 @@ const harmony = function(e: any){
         </button>
         {/if}
         {#if matchPhase == "Auto" || matchPhase == "Pregame"}
-        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click|once={() => {points += 2; matchData.score = points}}>Leave</button>
+        <button disabled={preGameInvalid} class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[15%]" on:click|once={() => {points += 2; matchData.score = points;matchData.left = true;}}>Leave</button>
         {/if}
         {#if matchPhase == "Teleop"}
-        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={() => {matchData.climb = true}}>Climb</button>
-        <input type="checkbox" name="harmony" on:click={(event) => {harmony(event);}}>
-        <label for="harmony"> Harmony</label>
+        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{matchData.harmony = !matchData.harmony;harmony(matchData.harmony);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
         {/if} 
-        {/if}        
+        {/if}
+        <center>
+            <h1 class="text-8xl text-floral-white">Team {team}<br>Score: {points}</h1>
+        </center>            
     </div>
 </div>
