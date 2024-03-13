@@ -251,20 +251,20 @@
 </script>
 <style>
     ul {
-        list-style-type: none; /* Remove default bullet points */
+        list-style-type: none; 
     }
     li {
         text-indent: 4em;
         margin-left: 40px;
-        display: flex; /* Align checkbox and text horizontally */
-        align-items: center; /* Center vertically */
+        display: flex; 
+        align-items: center; 
     }
     /*input[type="checkbox"] {
         margin-right: 10px; 
     }*/
     li.disabled {
-        color: #888; /* Grayed out text color */
-        pointer-events: none; /* Disable interactions */
+        color: #888;
+        pointer-events: none; 
     }
 
     .editable{
