@@ -2,6 +2,10 @@ In no particular order
 
 firebase
 save edited export data
-undo/redo
+undo/redo [in progress]
 Ui overhaul
-Fix climb and harmony bug
+Add trap button
+Continue spotlight
+Add point values for buttons
+bugs:
+climb and harmony bug appears to have made a sequel in the spotlight button. amazing. just like every other sequel, it's worse than the original. 

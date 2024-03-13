@@ -27,6 +27,7 @@
         startTime: "",
         score: 0,
         left: false,
+        spotlight: false,
         incapLogs:[
             {},
         ],
@@ -204,11 +205,18 @@ const harmony = function(e: boolean){
     harmonyInteract = true;
 }
 var climbBtn:any;
+var sptlghtBtn:any;
+var sptlghtBtnStyle = "";
 $: {
     if(matchData.harmony == true){
         climbBtn.style["background-color"]="rgb(4, 201, 7)";
     }else if(matchData.climb == true){
         climbBtn.style["background-color"]="rgb(214, 4, 4)";
+    }
+   if(matchData.spotlight == true){
+        sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
+    }else{
+        sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
     }
 }
 const undo = function(){
@@ -278,10 +286,13 @@ const redo = function(){
         {/if}
         {#if matchPhase == "Teleop"}
         <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{matchData.harmony = !matchData.harmony;harmony(matchData.harmony);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
-        {/if} 
+        {#if matchData.climb == true}
+        <button class="text-4xl bg-eerie-black text-floral-white px-md py-sm rounded-2xl mx-sm hover:bg-opacity-85 w-[15%]" on:click={()=>{matchData.spotlight = !matchData.spotlight}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
         {/if}
-        <center>
-            <h1 class="text-8xl text-floral-white">Team {team}<br>Score: {points}</h1>
-        </center>            
+        {/if} 
+        {/if}    
+        <center><br>
+            <h1 class="text-4xl text-floral-white">Team {team}<br>Score: {points}</h1>
+        </center>        
     </div>
 </div>
