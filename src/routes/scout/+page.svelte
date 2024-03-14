@@ -185,7 +185,7 @@
         });
     }
     let harmonyInteract = false;
-    $:  if(harmonyInteract){ 
+    /*$:  if(harmonyInteract){ 
             if(matchData.harmony == true){
                 points+=2;
                 matchData.score = points;
@@ -193,17 +193,9 @@
                 points-=2;
                 matchData.score = points;
             }
-        }
+        }*/
 const harmony = function(e: boolean){
     matchData.harmony = e;
-    /*if(!harmonyInteract && matchData.harmony){
-        points+=1;
-    }else if(harmonyInteract && !matchData.harmony){
-        points-=1;
-    }else if(harmonyInteract && matchData.harmony){
-        points+=1;
-    }*/
-    matchData.score = points;
     harmonyInteract = true;
 }
 var climbBtn:any;
@@ -219,6 +211,13 @@ $: {
         sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
     }else{
         sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
+    }
+}
+
+$: {
+    if(points < 0){
+        points = 0;
+        matchData.score = points;
     }
 }
 
