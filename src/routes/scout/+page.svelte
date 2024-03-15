@@ -184,19 +184,45 @@
             type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
         });
     }
+    let spotlightInteract = false;
     let harmonyInteract = false;
-    /*$:  if(harmonyInteract){ 
-            if(matchData.harmony == true){
+    let harmonyVal = false;
+    let spotlightVal = false;
+    let lastRecordedSL = false;
+    let lastRecordedH = false;
+    $: if(spotlightInteract && lastRecordedSL !== spotlightVal){
+        if(spotlightVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(spotlightVal == false){
+            points-=1;
+            matchData.score = points;
+        }
+        lastRecordedSL = spotlightVal;
+    }
+    $:  if(harmonyInteract && lastRecordedH !== harmonyVal){ 
+            if(harmonyVal == true){
                 points+=2;
                 matchData.score = points;
-            }else if(matchData.harmony == false){
+            }else if(harmonyVal == false){
                 points-=2;
                 matchData.score = points;
             }
-        }*/
+            lastRecordedH = harmonyVal;
+        } 
 const harmony = function(e: boolean){
+    console.log(e);
+    console.log(harmonyInteract);
     matchData.harmony = e;
+    harmonyVal = e;
     harmonyInteract = true;
+}
+const spotlight = function(e: boolean){
+    console.log(e);
+    console.log(spotlightInteract);
+    matchData.spotlight = e;
+    spotlightVal = e;
+    spotlightInteract = true;
 }
 var climbBtn:any;
 var sptlghtBtn:any;
@@ -289,9 +315,9 @@ $: {
         <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" on:click|once={() => {points += 2; matchData.score = points;matchData.left = true;}}>Leave Zone</button>
         {/if}
         {#if matchPhase == "Teleop"}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{matchData.harmony = !matchData.harmony;harmony(matchData.harmony);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
         {#if matchData.climb == true}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.spotlight = !matchData.spotlight}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
         {/if}
         {/if} 
         {/if}
