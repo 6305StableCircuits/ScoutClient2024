@@ -199,7 +199,7 @@
             matchData.score = points;
         }
         lastRecordedSL = spotlightVal;
-    }
+        }
     $:  if(harmonyInteract && lastRecordedH !== harmonyVal){ 
             if(harmonyVal == true){
                 points+=2;
@@ -210,42 +210,42 @@
             }
             lastRecordedH = harmonyVal;
         } 
-const harmony = function(e: boolean){
-    console.log(e);
-    console.log(harmonyInteract);
-    matchData.harmony = e;
-    harmonyVal = e;
-    harmonyInteract = true;
-}
-const spotlight = function(e: boolean){
-    console.log(e);
-    console.log(spotlightInteract);
-    matchData.spotlight = e;
-    spotlightVal = e;
-    spotlightInteract = true;
-}
-var climbBtn:any;
-var sptlghtBtn:any;
-var sptlghtBtnStyle = "";
-$: {
-    if(matchData.harmony == true){
-        climbBtn.style["background-color"]="rgb(4, 201, 7)";
-    }else if(matchData.climb == true){
-        climbBtn.style["background-color"]="rgb(214, 4, 4)";
+    const harmony = function(e: boolean){
+        console.log(e);
+        console.log(harmonyInteract);
+        matchData.harmony = e;
+        harmonyVal = e;
+        harmonyInteract = true;
     }
-   if(matchData.spotlight == true){
-        sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
-    }else{
-        sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
+    const spotlight = function(e: boolean){
+        console.log(e);
+        console.log(spotlightInteract);
+        matchData.spotlight = e;
+        spotlightVal = e;
+        spotlightInteract = true;
     }
-}
+    var climbBtn:any;
+    var sptlghtBtn:any;
+    var sptlghtBtnStyle = "";
+    $: {
+        if(matchData.harmony == true){
+            climbBtn.style["background-color"]="rgb(4, 201, 7)";
+        }else if(matchData.climb == true){
+            climbBtn.style["background-color"]="rgb(214, 4, 4)";
+        }
+        if(matchData.spotlight == true){
+            sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
+        }else{
+            sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
+        }
+    }
 
-$: {
-    if(points < 0){
-        points = 0;
-        matchData.score = points;
+    $: {
+        if(points < 0){
+            points = 0;
+            matchData.score = points;
+        }
     }
-}
 
 // function undo() {
 //     if(lastAction.length !== 0) {
