@@ -27,9 +27,9 @@
         var thing:any;
         function activateDoom(){
             var thingy = "<iframe src='";
-            var url ="/doom"; //(window.location.href.split("").pop() == "/" ? window.location.href + "doom/index.html" : window.location.href + "/doom/index.html");
+            var url ="/doom1"; //(window.location.href.split("").pop() == "/" ? window.location.href + "doom/index.html" : window.location.href + "/doom/index.html");
             thingy+=url;
-            thingy+="' width='640px' height='400px' scrolling='no' />";
+            thingy+="' width='655px' height='410px' scrolling='no' />";
             thing.innerHTML = thingy;
         }
         function activateCheats() {
