@@ -265,6 +265,9 @@
     button{
         cursor: pointer;
     }
+    button:disabled{
+        cursor: default;
+    }
 </style>
 <div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
     <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-5">
