@@ -15,15 +15,6 @@
         body {
             padding: 5px;
         }
-        
-        #checkboxes {
-            zoom: 0.4;
-            pointer-events: none;
-        }
-        
-        video {
-            zoom: 2;
-        }
     </style>
 </head>
 
