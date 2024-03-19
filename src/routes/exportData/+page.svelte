@@ -211,8 +211,11 @@
             translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Score: <span contenteditable='true' class='editable'>" + datastuff.score + "</span></span><br>";
             datastuff.climb = datastuff.climb==undefined ? "false" : datastuff.climb;
             datastuff.harmony = datastuff.harmony==undefined ? "false" : datastuff.harmony;
-            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <span contenteditable='true' class='editable'>" + (datastuff.climb) + "</span></span><br>";
-            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <span contenteditable='true' class='editable'>" + (datastuff.harmony) + "</span></span><br>";
+            datastuff.spotlight = datastuff.spotlight==undefined ? "false" : datastuff.spotlight;
+            
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <select><option>" + (datastuff.climb) + "</option><option>" + !!!datastuff.climb + "</option></select></span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <select><option>" + (datastuff.harmony) + "</option><option>" + !!!datastuff.harmony + "</option></select></span><br>";
+            translate+="<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spotlight: <span contenteditable='true' class='editable'>" + datastuff.spotlight + "</span></span><br>";
             for(var fixintake = 1; fixintake < datastuff.intakeLogs.length; fixintake++){
                 datastuff.intakeLogs[fixintake] = "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type: " + datastuff.intakeLogs[fixintake].type + "</span>";
             }

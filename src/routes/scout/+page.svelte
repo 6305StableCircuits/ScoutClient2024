@@ -28,6 +28,7 @@
         score: 0,
         left: false,
         spotlight: false,
+        misses: 0,
         incapLogs:[
             {},
         ],
@@ -270,16 +271,27 @@
     }
 </style>
 <div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
-    <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-5">
+    <div class="flex pt-sm items-center justify-center" style="z-index:9999">
+    <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-        </svg>              
-    </button>
-    <div class="text-8xl text-floral-white text-center justify-center">{points}</div>
+        </svg>
+    </button>  
+        <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
+        {#if matchStarted&&!matchFinished}
+            <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
+            {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}</b></span>
+        {/if}
+        {#if !(matchStarted&&matchFinished == false)} 
+           <b>Team {team}</b> 
+        {/if}
+    </span>
+    </div>
+    <br><br><br>
     {#if matchStarted}
         <div class="flex pt-xl items-center justify-center">
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]">Undo</button>
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]">Redo</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%] disabled:opacity-50 enabled:hover:opacity-85">Undo</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%] disabled:opacity-50 enabled:hover:opacity-85">Redo</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
@@ -301,7 +313,10 @@
             <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:click={() => scoreSpeaker(isCharge = false)}>Speaker Score</button>
         </div>
         <div class="flex pt-md items-center justify-center">
-            <button disabled={autoInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[88%] disabled:bg-opacity-50 hover:bg-opacity-85" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
+            {#if matchPhase=="Teleop"}
+            <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
+            {/if}
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;}}>Miss</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
@@ -323,13 +338,6 @@
         <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
         {/if}
         {/if} 
-        {/if}
-    </div>
-    <div class="flex pt-sm items-center justify-center">
-        {#if matchStarted&&!matchFinished}
-        <div class="text-6xl text-floral-white text-center px-md py-sm absolute bottom-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer">
-            {matchPhase} | {Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}
-        </div>
         {/if}
     </div>
 </div>

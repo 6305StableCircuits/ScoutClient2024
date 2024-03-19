@@ -58,6 +58,39 @@
         <label for="round">Round</label>&nbsp;&nbsp;<input type="number" bind:value={round} name="round"><br>
         <label for="color">Color</label>&nbsp;&nbsp;<select name="color" bind:value={color}><option>Red</option><option>Blue</option></select><br>
         <center><button id="start" on:click={()=>{saveData();goto('/scout')}} class="text-l bg-eerie-black text-floral-white px-md py-sm rounded-xl mx-sm hover:bg-opacity-85 w-[10%]">Start</button></center>
+        {#if scouter.toLowerCase()=="frisk"}
+        <b>WARNING: This name will make your life hell. Proceed anyway?</b>
+        {/if}
+        {#if scouter.toLowerCase()=="alphys"}
+        <b>D-don't do that.</b>
+        {/if}
+        {#if scouter.toLowerCase() == "asgore"}
+        <b>You cannot.</b>
+        {/if}
+        {#if scouter.toLowerCase() == "asriel"}
+        <b>...</b>
+        {/if}
+        {#if scouter.toLowerCase() == "flowey"}
+        <b>I already chose THAT name.</b>
+        {/if}
+        {#if scouter.toLowerCase() == "sans"}
+        <b style="font-family:cursive">nope.</b>
+        {/if}
+        {#if scouter.toLowerCase() == "toriel"}
+        <b>I think you should think of your own name, my child.</b>
+        {/if}
+        {#if scouter.toLowerCase() == "undyne"}
+        <b>Get your OWN name!</b>
+        {/if}
+        {#if scouter.toLowerCase() == "aaaaaa"}
+        <b>Not very creative...?</b>
+        {/if}
+        {#if scouter.toLowerCase() == "papyru"}
+        <b>I'LL ALLOW IT!!!!</b>
+        {/if}
+        {#if scouter.toLowerCase() == "napsta"}
+        <b>............ (They are powerless to stop you.)</b>
+        {/if}
         <div id="thing" bind:this={thing}></div>
     </div>
 </div>
