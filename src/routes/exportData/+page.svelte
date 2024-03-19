@@ -187,7 +187,6 @@
         json.color = alliance;
         return json;
     }
-
     onMount(() => {
         console.log(saveData);
         var dataElem = [];
