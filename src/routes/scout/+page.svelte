@@ -130,36 +130,74 @@
     let matchPhase: string = "Pregame";
 
     function scoreAmp(undo: boolean=false, redo: boolean=false) {
-        asLongAs(matchPhase == "Auto" && hasIntaked, function() {
-            points += 2;
-        }, function() {
-            points += 1;
-        });
         if(!redo && !undo) {
             undone = [];
+            asLongAs(matchPhase == "Auto" && hasIntaked, function() {
+            points += 2;
+            }, function() {
+                points += 1;
+            });
+            hasIntaked = false;
+        }
+        if(undo) {
+            undone = [...undone, "ampScore"];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            points -= 1;
+        } else if(redo) {
+            lastAction = [...lastAction, "ampScore"];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            points += 1;
+        } else {
+            lastAction = [...lastAction, "ampScore"];
+            if(undone.length != 0) {
+                undone.pop();
+            }
         }
         matchData.score = points;
         matchData.shotLogs.push({type:"amp"});
-        hasIntaked = false;
     }
 
     function scoreSpeaker(isCharge: boolean, undo: boolean=false, redo: boolean=false) {
-        asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
-            points += 5;   
-        }, function() {
-            points += 2;
-        });
         if(!redo && !undo) {
-            undone = [];
-        }
+            asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
+                points += 5;   
+            }, function() {
+                points += 2;
+            });
+        } 
         if(undo && !isCharge) {
             undone = [...undone, "speakerScore"];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            points -= 2;
         } else if(undo && isCharge) {
             undone = [...undone, "chargedSpeakerScore"];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            points -= 5;
         } else if(redo && !isCharge) {
             lastAction = [...lastAction, "speakerScore"];
-        } else {
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            points += 2;
+        } else if(redo && isCharge) {
             lastAction = [...lastAction, "chargedSpeakerScore"];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            points += 5;
+        } else {
+            lastAction = [...lastAction, "speakerScore"];
+            if(undone.length != 0) {
+                undone.pop();
+            }
         }
         matchData.score = points;
         matchData.shotLogs.push({type:"speaker"});
@@ -167,18 +205,33 @@
     }
     
     function intake(type: number, undo: boolean=false, redo: boolean=false) {
-        hasIntaked = true;
         if(!redo && !undo) {
-            undone = [];
-        }
+            hasIntaked = true;
+        } 
         if(undo && type == 1) {
             undone = [...undone, "groundIntake"];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            hasIntaked = false;
         } else if(undo && type == 0) {
             undone = [...undone, "sourceIntake"];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            hasIntaked = false;
         } else if(redo && type == 1) {
             lastAction = [...lastAction, "groundIntake"];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            hasIntaked = true;
         } else {
             lastAction = [...lastAction, "sourceIntake"];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            hasIntaked = true;
         }
         matchData.intakeLogs.push({
             type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
@@ -196,13 +249,6 @@
         }
 const harmony = function(e: boolean){
     matchData.harmony = e;
-    /*if(!harmonyInteract && matchData.harmony){
-        points+=1;
-    }else if(harmonyInteract && !matchData.harmony){
-        points-=1;
-    }else if(harmonyInteract && matchData.harmony){
-        points+=1;
-    }*/
     matchData.score = points;
     harmonyInteract = true;
 }
@@ -222,14 +268,50 @@ $: {
     }
 }
 
-// function undo() {
-//     if(lastAction.length !== 0) {
-//         let action = lastAction[lastAction.length-1]
-//         switch(action) {
-//             case
-//         }
-//     }
-// }
+function undo() {
+    if(lastAction.length !== 0) {
+        let action = lastAction[lastAction.length-1]
+        switch(action) {
+            case "groundIntake":
+                intake(1, true, false);
+            break;
+            case "sourceIntake":
+                intake(0, true, false);
+            break;
+            case "speakerScore":
+                scoreSpeaker(false, true, false);
+            break;
+            case "chargedSpeakerScore":
+                scoreSpeaker(true, true, false);
+            break;
+            case "ampScore":
+                scoreAmp(true, false);
+            break;
+        }
+    }
+}
+    function redo() {
+        if(undone.length !== 0) {
+            let action = undone[undone.length - 1];
+            switch(action) {
+                case "groundIntake":
+                    intake(1, false, true);
+                break;
+                case "sourceIntake":
+                    intake(0, false, true);
+                break;
+                case "speakerScore":
+                    scoreSpeaker(false, false, true);
+                break;
+                case "chargedSpeakerScore":
+                    scoreSpeaker(true, false, true);
+                break;
+                case "ampScore":
+                    scoreAmp(false, true);
+                break;
+            }
+        }
+    }
 
 </script>
 <style>
@@ -250,8 +332,8 @@ $: {
     <div class="text-8xl text-floral-white text-center justify-center">{points}</div>
     {#if matchStarted}
         <div class="flex pt-xl items-center justify-center">
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]">Undo</button>
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]">Redo</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={undo}>Undo{#if lastAction.length != 0}<br>{lastAction[lastAction.length - 1]}{/if}</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={redo}>Redo{#if undone.length != 0}<br>{undone[undone.length - 1]}{/if}</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
