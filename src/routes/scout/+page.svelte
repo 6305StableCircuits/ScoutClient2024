@@ -316,7 +316,7 @@
             {#if matchPhase=="Teleop"}
             <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
             {/if}
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;}}>Miss</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;hasIntaked=false;}}>Miss</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
