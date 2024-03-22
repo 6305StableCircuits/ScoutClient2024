@@ -28,6 +28,7 @@
         score: 0,
         left: false,
         spotlight: false,
+        misses: 0,
         incapLogs:[
             {},
         ],
@@ -237,16 +238,61 @@
             type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
         });
     }
+    let spotlightInteract = false;
     let harmonyInteract = false;
-    $:  if(harmonyInteract){ 
-            if(matchData.harmony == true){
+    let harmonyVal = false;
+    let spotlightVal = false;
+    let lastRecordedSL = false;
+    let lastRecordedH = false;
+    $: if(spotlightInteract && lastRecordedSL !== spotlightVal){
+        if(spotlightVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(spotlightVal == false){
+            points-=1;
+            matchData.score = points;
+        }
+        lastRecordedSL = spotlightVal;
+        }
+    $:  if(harmonyInteract && lastRecordedH !== harmonyVal){ 
+            if(harmonyVal == true){
                 points+=2;
                 matchData.score = points;
-            }else if(matchData.harmony == false){
+            }else if(harmonyVal == false){
                 points-=2;
                 matchData.score = points;
             }
+            lastRecordedH = harmonyVal;
+        } 
+    const harmony = function(e: boolean){
+        console.log(e);
+        console.log(harmonyInteract);
+        matchData.harmony = e;
+        harmonyVal = e;
+        harmonyInteract = true;
+    }
+    const spotlight = function(e: boolean){
+        console.log(e);
+        console.log(spotlightInteract);
+        matchData.spotlight = e;
+        spotlightVal = e;
+        spotlightInteract = true;
+    }
+    var climbBtn:any;
+    var sptlghtBtn:any;
+    var sptlghtBtnStyle = "";
+    $: {
+        if(matchData.harmony == true){
+            climbBtn.style["background-color"]="rgb(4, 201, 7)";
+        }else if(matchData.climb == true){
+            climbBtn.style["background-color"]="rgb(214, 4, 4)";
         }
+        if(matchData.spotlight == true){
+            sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
+        }else{
+            sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
+        }
+<<<<<<< HEAD
 const harmony = function(e: boolean){
     matchData.harmony = e;
     matchData.score = points;
@@ -260,13 +306,16 @@ $: {
         climbBtn.style["background-color"]="rgb(4, 201, 7)";
     }else if(matchData.climb == true){
         climbBtn.style["background-color"]="rgb(214, 4, 4)";
+=======
+>>>>>>> 8766308b9937255e1286357c4c4d405c99d8fa92
     }
-   if(matchData.spotlight == true){
-        sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
-    }else{
-        sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
+
+    $: {
+        if(points < 0){
+            points = 0;
+            matchData.score = points;
+        }
     }
-}
 
 function undo() {
     if(lastAction.length !== 0) {
@@ -322,18 +371,37 @@ function undo() {
     button{
         cursor: pointer;
     }
+    button:disabled{
+        cursor: default;
+    }
 </style>
 <div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
-    <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-5">
+    <div class="flex pt-sm items-center justify-center" style="z-index:9999">
+    <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-        </svg>              
-    </button>
-    <div class="text-8xl text-floral-white text-center justify-center">{points}</div>
+        </svg>
+    </button>  
+        <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
+        {#if matchStarted&&!matchFinished}
+            <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
+            {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}</b></span>
+        {/if}
+        {#if !(matchStarted&&matchFinished == false)} 
+           <b>Team {team}</b> 
+        {/if}
+    </span>
+    </div>
+    <br><br><br>
     {#if matchStarted}
         <div class="flex pt-xl items-center justify-center">
+<<<<<<< HEAD
             <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={undo}>Undo{#if lastAction.length != 0}<br>{lastAction[lastAction.length - 1]}{/if}</button>
             <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={redo}>Redo{#if undone.length != 0}<br>{undone[undone.length - 1]}{/if}</button>
+=======
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%] disabled:opacity-50 enabled:hover:opacity-85">Undo</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%] disabled:opacity-50 enabled:hover:opacity-85">Redo</button>
+>>>>>>> 8766308b9937255e1286357c4c4d405c99d8fa92
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
@@ -355,7 +423,10 @@ function undo() {
             <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:click={() => scoreSpeaker(isCharge = false)}>Speaker Score</button>
         </div>
         <div class="flex pt-md items-center justify-center">
-            <button disabled={autoInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[88%] disabled:bg-opacity-50 hover:bg-opacity-85" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
+            {#if matchPhase=="Teleop"}
+            <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
+            {/if}
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;}}>Miss</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
@@ -372,18 +443,11 @@ function undo() {
         <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" on:click|once={() => {points += 2; matchData.score = points;matchData.left = true;}}>Leave Zone</button>
         {/if}
         {#if matchPhase == "Teleop"}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{matchData.harmony = !matchData.harmony;harmony(matchData.harmony);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
         {#if matchData.climb == true}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.spotlight = !matchData.spotlight}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
         {/if}
         {/if} 
-        {/if}
-    </div>
-    <div class="flex pt-sm items-center justify-center">
-        {#if matchStarted&&!matchFinished}
-        <div class="text-6xl text-floral-white text-center px-md py-sm absolute bottom-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer">
-            {matchPhase} | {Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}
-        </div>
         {/if}
     </div>
 </div>

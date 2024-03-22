@@ -107,3 +107,7 @@
 div[id="inpts"]{
   text-align: center;
 }
+
+button:disabled{
+  cursor: default;
+}

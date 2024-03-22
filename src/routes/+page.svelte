@@ -1,54 +1,6 @@
 <script lang=ts>
     import { goto } from "$app/navigation";
-    /*const options = {
-        method: 'POST',
-       // redirect:"follow"
-       headers: {
-        'sec-fetch-site':'same-site'
-       }
-    };
-                              
-fetch('https://6305.airofan.com/Matches/getMatches', options)
-  .then(response => response.json())
-  .then(response => console.log(response))
-  .catch(err => console.error(err));*/
-
- /* const options = {
-=======
-  /*const options = {
->>>>>>> f681772f7af7c91226c454ce5e63c16e448d2025
-  method: 'POST',
-  headers: {'Content-Type': 'application/x-www-form-urlencoded','Access-Control-Allow-Origin': "*", 'Access-Control-Allow-Credentials': 'true'},
-  body: new URLSearchParams({}),
-};*/
-
-/*fetch('https://6305.airofan.com/Matches/getMatches', options)
-  .then(response => response.json())
-  .then(response => console.log(response))
-  .catch(err => {});*/
-  /*var matchTypes = ["Qualification","Quarter Final","Semi Final","Final"];
-  var matchType = "Practice";*/
-  /*var urls = {
-    //matches: "https://frc-api.firstinspires.org/v3.0/2024/schedule/CAAV?tournamentLevel="+matchType,
-    teams: "https://api.statbotics.io/v2/team_events/event/2024cafr"
-  }
-  fetch(urls.teams, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error('error: network sad :(');
-    }
-    return response.json();
-})
-.then(data => console.log(data))
-.catch(error => {
-    console.error('Error occurred: ' + error);
-});*/
-
+    //there was some stuff here, if you need it (i doubt you will), go to an older commit
 </script>
 
 <div class="h-screen bg-floral-white dark:bg-black-olive flex flex-col md:border-[16px] border-8 border-timberwolf dark:border-eerie-black">
