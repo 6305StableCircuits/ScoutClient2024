@@ -218,12 +218,14 @@
                 lastAction.pop();
             }
             points -= 1;
+            hasIntaked = true;
         } else if(redo) {
             lastAction = [...lastAction, {type:"ampScore", points: 1, name: "Amp Score"}];
             if(undone.length != 0) {
                 undone.pop();
             }
             points += 1;
+            hasIntaked = false;
         } else {
             lastAction = [...lastAction, {type:"ampScore", name: "Amp Score"}];
             if(undone.length != 0) {
@@ -241,6 +243,7 @@
             }, function() {
                 points += 2;
             });
+            hasIntaked = false;
         } 
         if(undo && !isCharge) {
             undone = [...undone, {type:"speakerScore",points:-2,name: "Speaker Score"}];
@@ -248,24 +251,28 @@
                 lastAction.pop();
             }
             points -= 2;
+            hasIntaked = true;
         } else if(undo && isCharge) {
             undone = [...undone, {type:"chargedSpeakerScore",points:-5, name: "Charged Speaker Score"}];
             if(lastAction.length != 0) {
                 lastAction.pop();
             }
             points -= 5;
+            hasIntaked = true;
         } else if(redo && !isCharge) {
             lastAction = [...lastAction, {type:"speakerScore",points:2, name: "Speaker Score"}];
             if(undone.length != 0) {
                 undone.pop();
             }
             points += 2;
+            hasIntaked = false;
         } else if(redo && isCharge) {
             lastAction = [...lastAction, {type:"chargedSpeakerScore",points:5, name: "Charged Speaker Score"}];
             if(undone.length != 0) {
                 undone.pop();
             }
             points += 5;
+            hasIntaked = false;
         } else {
             lastAction = [...lastAction, {type:"speakerScore", name: "Speaker Score"}];
             if(undone.length != 0) {
@@ -274,7 +281,6 @@
         }
         matchData.score = points;
         matchData.shotLogs.push({type:"speaker"});
-        hasIntaked = false;
     }
     
     function intake(type: number, undo: boolean=false, redo: boolean=false) {
@@ -309,6 +315,31 @@
         matchData.intakeLogs.push({
             type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
         });
+    }
+
+    function noteMiss(undo: boolean=false, redo: boolean=false) {
+        if(!redo && !undo) {
+            matchData.misses++;
+            hasIntaked = false;
+            }
+        if(undo) {
+            undone = [...undone, {type:"miss", name: "Miss"}];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            hasIntaked = true;
+        } else if(redo) {
+            lastAction = [...lastAction, {type:"miss", name: "Miss"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            hasIntaked = false;
+        } else {
+            lastAction = [...lastAction, {type:"miss", name: "Miss"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+        }
     }
     let melodyInteract = false;
     let melodyVal = false;
@@ -629,6 +660,9 @@ const undo = function() {
                 points-=3;
                 matchData.score = points;
             break;
+            case "miss":
+                noteMiss(true, false);
+            break;
         }
         matchData.score = points;
     }
@@ -661,6 +695,9 @@ const redo = function() {
                     points+=3;
                     matchData.score = points;
                 break;
+                case "miss":
+                    noteMiss(false, true);
+                break;
             }
             matchData.score = points;
         }
@@ -682,7 +719,7 @@ const redo = function() {
 </style>
 <div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
     <div class="flex pt-sm items-center justify-center" style="z-index:9999">
-    <button on:click={() => {if((matchStarted&&!matchFinished)||matchData!==emptyData){if(confirm("Are you sure you want to leave? Your match is not finished.")){summarize();goto('/')}}else{goto('/')}}} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
+    <button on:click={() => {if((matchStarted && !matchFinished)||matchData!==emptyData){if(confirm("Are you sure you want to leave? Your match is not finished.")){summarize();goto('/')}}else{goto('/')}}} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
@@ -735,7 +772,7 @@ const redo = function() {
             {#if matchPhase=="Teleop"}
             <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
             {/if}
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;}}>Miss</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => noteMiss()}>Miss</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">

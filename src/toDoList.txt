@@ -20,7 +20,7 @@ coopertition [almost finished, needs to be implemented in export]
 
 ensemble [almost finished, needs to be implemented in export]
 
-win/loss/time [win almost finished, tie is almost finished, loss doesn't need to be done from what i know]
+win/loss/time [win almost finished, tie is almost finished] (Loss can be default)
 
 fouls/cards [cards(penalties) are almost finished, needs to be implemented in export, fouls have not been started]
 
@@ -28,11 +28,11 @@ disabled [almost finished, needs to be implemented in export]
 
 disqualified [almost finished, needs to be implemented in export]
 
-cycle time [don't know what this is]
+cycle time [don't know what this is] (Automatic calculation of time between picking up a note and shooting it)
 
 melody [almost finished, needs to be implemented in export]
 
-penalties [almost finished, needs to be implemented in export]
+penalties [almost finished, needs to be implemented in export] (I cannot interact with them but that could just be a me thing)
 
 
 Low Priority (backlog/is probably done)
@@ -42,3 +42,7 @@ Ui overhaul [partially complete]
 bugs (High Priority):
 undo/redo seems to have some point value issues (charged score should change score more than regular score)
 undo/redo logs ground intake as source intake
+
+bugs (Low Priority)
+undo/redo incorrectly lists what it is undoing/redoing (at least when using the intake menus)
+confirmation prompt shows even with empty data or finished game
