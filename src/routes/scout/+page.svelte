@@ -201,8 +201,10 @@
     $: preGameInvalid = matchPhase == "Pregame";
     
     let matchPhase: string = "Pregame";
-
+    let cycleStart = 0;
+    let cycleTime = 0;
     function scoreAmp(undo: boolean=false, redo: boolean=false) {
+        cycleTime = Date.now()-cycleStart;
         if(!redo && !undo) {
             undone = [];
             asLongAs(matchPhase == "Auto" && hasIntaked, function() {
@@ -233,10 +235,11 @@
             }
         }
         matchData.score = points;
-        matchData.shotLogs.push({type:"amp"});
+        matchData.shotLogs.push({type:"amp",cycle:cycleTime.toString()+"ms"});
     }
 
     function scoreSpeaker(isCharge: boolean, undo: boolean=false, redo: boolean=false) {
+        cycleTime = Date.now()-cycleStart;
         if(!redo && !undo) {
             asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
                 points += 5;   
@@ -280,10 +283,10 @@
             }
         }
         matchData.score = points;
-        matchData.shotLogs.push({type:"speaker"});
+        matchData.shotLogs.push({type:"speaker",cycle:cycleTime.toString()+"ms"});
     }
-    
     function intake(type: number, undo: boolean=false, redo: boolean=false) {
+        cycleStart = Date.now();
         if(!redo && !undo) {
             hasIntaked = true;
         } 

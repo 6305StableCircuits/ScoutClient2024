@@ -14,6 +14,8 @@ High Priority (haven't started, or needs to be finished)
 
 *implement undo/redo for penalties [not started yet]*
 
+*make undo/redo remove/add back intake/shotlogs [not started yet]*
+
 park [almost finished, needs to be implemented in export] 
 
 coopertition [almost finished, needs to be implemented in export]
@@ -28,7 +30,7 @@ disabled [almost finished, needs to be implemented in export]
 
 disqualified [almost finished, needs to be implemented in export]
 
-cycle time [don't know what this is] (Automatic calculation of time between picking up a note and shooting it)
+cycle time [probably done, hasn't been tested yet] (Automatic calculation of time between picking up a note and shooting it)
 
 melody [almost finished, needs to be implemented in export]
 
