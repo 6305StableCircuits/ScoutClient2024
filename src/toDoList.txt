@@ -1,10 +1,44 @@
-In no particular order
+High Priority (haven't started, or needs to be finished)
 
-firebase
-save edited export data
-undo/redo [in progress]
+*Double check points are correct [will be done once everything else is finished]*
+
+*Add trap button [not started yet]*
+
+*restyle climb menu [not started yet]*
+
+*save edited export data [being worked on]*
+
+*undo/redo [to be finished soon]*
+
+*Add new items to export data (including, but not limited to: penalties, coopertition, park, melody, etc)*
+
+*implement undo/redo for penalties [not started yet]*
+
+park [almost finished, needs to be implemented in export] 
+
+coopertition [almost finished, needs to be implemented in export]
+
+ensemble [almost finished, needs to be implemented in export]
+
+win/loss/time [win almost finished, tie is almost finished, loss doesn't need to be done from what i know]
+
+fouls/cards [cards(penalties) are almost finished, needs to be implemented in export, fouls have not been started]
+
+disabled [almost finished, needs to be implemented in export]
+
+disqualified [almost finished, needs to be implemented in export]
+
+cycle time [don't know what this is]
+
+melody [almost finished, needs to be implemented in export]
+
+penalties [almost finished, needs to be implemented in export]
+
+
+Low Priority (backlog/is probably done)
+firebase [probably won't be done, export data will be implemented differently]
 Ui overhaul [partially complete]
-Add trap button
-Continue spotlight
 
-bugs:
+bugs (High Priority):
+undo/redo seems to have some point value issues (charged score should change score more than regular score)
+undo/redo logs ground intake as source intake

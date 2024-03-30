@@ -1,6 +1,6 @@
 
 <script lang=ts>
-	import { goto } from "$app/navigation";
+	import { disableScrollHandling, goto } from "$app/navigation";
 	import { Timer } from "$lib/classes/Timer";
     import { get } from 'svelte/store';
     import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
@@ -26,19 +26,42 @@
         climb: false,
         startTime: "",
         score: 0,
+        autoScore: 0,
+        teleopScore: 0,
         left: false,
         spotlight: false,
+        trap: false,
+        melody: false,
+        ensemble: false,
+        coopertition: false,
+        dq: false,
+        disabled: false,
+        park: false,
+        won: false,
+        tie: false,
         misses: 0,
+        summary: {
+            text: "",
+            preferences: {
+                intake: "",
+                score: "",
+                scoreAuto: false,
+            }
+        },
+        penalties: [
+            {},
+        ],
         incapLogs:[
             {},
         ],
         intakeLogs:[
-            {},
+            {type: ""},
         ],
         shotLogs:[
             {},
         ]
-    }
+    };
+    let emptyData = JSON.parse(JSON.stringify(matchData));
     savedData.subscribe(value => {
         saveData = value;
     })
@@ -73,8 +96,8 @@
     let timeRemaining = 150;
     let stopwatch: number = 0;
     let action: String = "";
-    let lastAction: Array<String> = [];
-    let undone: Array<String> = [];
+    let lastAction: Array<any> = [];
+    let undone: Array<any> = [];
     let matchTimer = new Timer("matchTimer", {
         onStart() {
             matchData.startTime = Date().toLocaleString();
@@ -89,11 +112,13 @@
             asLongAs((matchTimer.time + 1) == 0, function() {
                 matchPhase = "Pregame"
             },function(){ asLongAs((matchTimer.time + 1) <= 15, function() {
-                matchPhase = "Auto"
+                matchPhase = "Auto";
+                matchData.autoScore = matchData.score;
             }, function(){asLongAs((matchTimer.time + 1) > 15, function() {
-                matchPhase = "Teleop"
+                matchPhase = "Teleop";
+                matchData.teleopScore = matchData.score;
             },function(){ asLongAs((matchTimer.time + 1) >= 150, function(){
-                matchPhase = "Postgame"
+                matchPhase = "Postgame";
             })})})})});
         },
         onEnd() {
@@ -101,6 +126,53 @@
             matchFinished = true;
         }
     });
+    var thingthing = 0;
+    var grounds = 0;
+    var sources = 0;
+    var thingthingthingthingthingthing = 0;
+    var speakers = 0;
+    var amps = 0;
+    const summarize = function(){ //better than chatgpt
+            for(thingthing = 0; thingthing < matchData.intakeLogs.length; thingthing++){
+                if((matchData.intakeLogs[thingthing]).type == "ground"){
+                    grounds++;
+                }else{
+                    sources++;
+                }
+            }
+            for(thingthingthingthingthingthing = 0; thingthingthingthingthingthing < matchData.intakeLogs.length; thingthingthingthingthingthing++){
+                if((matchData.intakeLogs[thingthingthingthingthingthing]).type == "speaker"){
+                    speakers++;
+                }else{
+                    amps++;
+                }
+            }
+            if(matchData.autoScore > 0){
+                matchData.summary.preferences.scoreAuto = true;
+            }
+            matchData.summary.preferences.intake = grounds > sources ? "ground" : "source";
+            matchData.summary.preferences.score = speakers > amps ? "speaker" : "amp";
+            if(speakers == amps){
+                if(speakers == 0){
+                    matchData.summary.preferences.score = "neither";
+                }else{
+                    matchData.summary.preferences.score = "both";
+                }
+            }
+            if(grounds == sources){
+                if(grounds == 0){
+                    matchData.summary.preferences.intake = "neither";
+                }else{
+                    matchData.summary.preferences.intake = "both";
+                }
+            }
+            if(matchData.disabled && matchData.summary.preferences.intake == "neither" && matchData.summary.preferences.score == "neither"){
+                matchData.summary.text = `In round ${matchData.round}, team ${matchData.team}'s robot was disabled the entire time.`;
+            }else{
+                matchData.summary.text = `In round ${matchData.round}, team ${matchData.team} ${matchData.autoScore > 0 ? "waited until Teleop to start. " : `immediately started scoring points, totalling ${matchData.autoScore == 1 ? matchData.autoScore + " point" : matchData.autoScore + " points"} earned in Autonomous. `} In Teleop, the bot preferred scoring the ${matchData.summary.preferences.score}, intaking${matchData.summary.preferences.intake == "both" ? "" : " mainly"} using ${matchData.summary.preferences.intake == "both" ? "both intakes" : "the " + matchData.summary.preferences.intake + " intake"}, and generated a total of ${matchData.teleopScore == 1 ? matchData.teleopScore + " point" : matchData.teleopScore + " points"}. In the end, team ${matchData.team}'s bot scored ${matchData.score == 1 ? matchData.score + " point" : matchData.score + " points"}, and their alliance ${matchData.won ? "won" : "lost"} the game.${matchData.dq == true ? ` ${matchData.team}'s robot was disqualified. ` : ""}`;
+            }
+            console.log(matchData.summary);
+    }
     let incapStart = "";
     let incapTimer = new Timer("incapTimer", {
         onStart() {
@@ -131,36 +203,74 @@
     let matchPhase: string = "Pregame";
 
     function scoreAmp(undo: boolean=false, redo: boolean=false) {
-        asLongAs(matchPhase == "Auto" && hasIntaked, function() {
-            points += 2;
-        }, function() {
-            points += 1;
-        });
         if(!redo && !undo) {
             undone = [];
+            asLongAs(matchPhase == "Auto" && hasIntaked, function() {
+            points += 2;
+            }, function() {
+                points += 1;
+            });
+            hasIntaked = false;
+        }
+        if(undo) {
+            undone = [...undone, {type:"ampScore", points: -1, name: "Amp Score"}];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            points -= 1;
+        } else if(redo) {
+            lastAction = [...lastAction, {type:"ampScore", points: 1, name: "Amp Score"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            points += 1;
+        } else {
+            lastAction = [...lastAction, {type:"ampScore", name: "Amp Score"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
         }
         matchData.score = points;
         matchData.shotLogs.push({type:"amp"});
-        hasIntaked = false;
     }
 
     function scoreSpeaker(isCharge: boolean, undo: boolean=false, redo: boolean=false) {
-        asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
-            points += 5;   
-        }, function() {
-            points += 2;
-        });
         if(!redo && !undo) {
-            undone = [];
-        }
+            asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
+                points += 5;   
+            }, function() {
+                points += 2;
+            });
+        } 
         if(undo && !isCharge) {
-            undone = [...undone, "speakerScore"];
+            undone = [...undone, {type:"speakerScore",points:-2,name: "Speaker Score"}];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            points -= 2;
         } else if(undo && isCharge) {
-            undone = [...undone, "chargedSpeakerScore"];
+            undone = [...undone, {type:"chargedSpeakerScore",points:-5, name: "Charged Speaker Score"}];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            points -= 5;
         } else if(redo && !isCharge) {
-            lastAction = [...lastAction, "speakerScore"];
+            lastAction = [...lastAction, {type:"speakerScore",points:2, name: "Speaker Score"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            points += 2;
+        } else if(redo && isCharge) {
+            lastAction = [...lastAction, {type:"chargedSpeakerScore",points:5, name: "Charged Speaker Score"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            points += 5;
         } else {
-            lastAction = [...lastAction, "chargedSpeakerScore"];
+            lastAction = [...lastAction, {type:"speakerScore", name: "Speaker Score"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
         }
         matchData.score = points;
         matchData.shotLogs.push({type:"speaker"});
@@ -168,29 +278,73 @@
     }
     
     function intake(type: number, undo: boolean=false, redo: boolean=false) {
-        hasIntaked = true;
         if(!redo && !undo) {
-            undone = [];
-        }
+            hasIntaked = true;
+        } 
         if(undo && type == 1) {
-            undone = [...undone, "groundIntake"];
+            undone = [...undone, {type:"groundIntake", name: "Ground Intake"}];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            hasIntaked = false;
         } else if(undo && type == 0) {
-            undone = [...undone, "sourceIntake"];
+            undone = [...undone, {type:"sourceIntake", name: "Source Intake"}];
+            if(lastAction.length != 0) {
+                lastAction.pop();
+            }
+            hasIntaked = false;
         } else if(redo && type == 1) {
-            lastAction = [...lastAction, "groundIntake"];
+            lastAction = [...lastAction, {type:"groundIntake", name: "Ground Intake"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            hasIntaked = true;
         } else {
-            lastAction = [...lastAction, "sourceIntake"];
+            lastAction = [...lastAction, {type: "sourceIntake", name: "Source Intake"}];
+            if(undone.length != 0) {
+                undone.pop();
+            }
+            hasIntaked = true;
         }
         matchData.intakeLogs.push({
             type: type == 1 ? "ground" : (type == 0 ? "source" : "unknown")
         });
     }
+    let melodyInteract = false;
+    let melodyVal = false;
+    let winVal = false;
+    let winInteract = false;
+    let parkVal = false;
+    let dqVal = false;
+    let dqInteract = false;
+    let parkInteract = false;
+    let parkBtn: any;
+    let parkBtnStyle = "";
+    let tieVal = false;
+    let tieInteract = false;
+    let coopVal = false;
+    let coopInteract = false;
+    let disabledInteract = false;
+    let disabledBtn:any;
+    let disabledVal = false;
+    let climbInteract = false;
+    let climbVal = false;
+    let disabledBtnStyle = "";
+    let ensembleInteract = false;
+    let ensembleVal = false;
     let spotlightInteract = false;
     let harmonyInteract = false;
     let harmonyVal = false;
     let spotlightVal = false;
     let lastRecordedSL = false;
+    let lastRecordedE = false;
     let lastRecordedH = false;
+    let lastRecordedW = false;
+    let lastRecordedM = false;
+    let lastRecordedT = false;
+    let lastRecordedC = false;
+    let lastRecordedP = false;
+    let lastRecordedCl = false;
     $: if(spotlightInteract && lastRecordedSL !== spotlightVal){
         if(spotlightVal == true){
             points+=1;
@@ -200,47 +354,244 @@
             matchData.score = points;
         }
         lastRecordedSL = spotlightVal;
+    }
+    $: if(ensembleInteract && lastRecordedE !== ensembleVal){
+        if(ensembleVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(ensembleVal == false){
+            points-=1;
+            matchData.score = points;
         }
+        lastRecordedE = ensembleVal;
+    }
     $:  if(harmonyInteract && lastRecordedH !== harmonyVal){ 
-            if(harmonyVal == true){
-                points+=2;
-                matchData.score = points;
-            }else if(harmonyVal == false){
-                points-=2;
-                matchData.score = points;
-            }
-            lastRecordedH = harmonyVal;
-        } 
-    const harmony = function(e: boolean){
-        console.log(e);
-        console.log(harmonyInteract);
-        matchData.harmony = e;
-        harmonyVal = e;
-        harmonyInteract = true;
+        if(harmonyVal == true){
+            points+=2;
+            matchData.score = points;
+        }else if(harmonyVal == false){
+            points-=2;
+            matchData.score = points;
+        }
+        lastRecordedH = harmonyVal;
+    }
+    $:  if(melodyInteract && lastRecordedM !== melodyVal){ 
+        if(melodyVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(melodyVal == false){
+            points-=1;
+            matchData.score = points;
+        }
+        lastRecordedM = melodyVal;
+    }
+    $:  if(winInteract && lastRecordedW !== winVal){ 
+        if(winVal == true){
+            points+=2;
+            matchData.score = points;
+        }else if(winVal == false){
+            points-=2;
+            matchData.score = points;
+        }
+        lastRecordedW = winVal;
+    }
+    $:  if(tieInteract && lastRecordedT !== tieVal){ 
+        if(tieVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(tieVal == false){
+            points-=1;
+            matchData.score = points;
+        }
+        lastRecordedT = tieVal;
+    }
+    $:  if(parkInteract && lastRecordedP !== parkVal){ 
+        if(parkVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(parkVal == false){
+            points-=1;
+            matchData.score = points;
+        }
+        lastRecordedP = parkVal;
+    }
+    $:  if(coopInteract && lastRecordedC !== coopVal){ 
+        if(coopVal == true){
+            points+=1;
+            matchData.score = points;
+        }else if(coopVal == false){
+            points-=1;
+            matchData.score = points;
+        }
+        lastRecordedC = coopVal;
+    }
+    $:  if(climbInteract && lastRecordedCl !== climbVal){ 
+        if(climbVal == true){
+            points+=3;
+            matchData.score = points;
+        }else if(climbVal == false){
+            points-=3;
+            matchData.score = points;
+        }
+        lastRecordedCl = climbVal;
+    }
+    const ensemble = function(e: boolean){
+        matchData.ensemble = e;
+        ensembleVal = e;
+        ensembleInteract = true;
     }
     const spotlight = function(e: boolean){
-        console.log(e);
-        console.log(spotlightInteract);
         matchData.spotlight = e;
         spotlightVal = e;
         spotlightInteract = true;
     }
+    const melody = function(e: boolean){
+        matchData.melody = e;
+        melodyVal = e;
+        melodyInteract = true;
+    }
+    const park = function(e: boolean){
+        matchData.park = e;
+        parkVal = e;
+        parkInteract = true;
+    }
+    const win = function(e: boolean){
+        matchData.won = e;
+        winVal = e;
+        winInteract = true;
+    }
+    const tie = function(e: boolean){
+        matchData.tie = e;
+        tieVal = e;
+        tieInteract = true;
+    }
+    const dq = function(e: boolean){
+        matchData.dq = e;
+        dqVal = e;
+        dqInteract = true;
+    }
+    const disabled = function(e: boolean){
+        matchData.disabled = e;
+        disabledVal = e;
+        disabledInteract = true;
+    }
+    const coop = function(e: boolean){
+        matchData.coopertition = e;
+        coopVal = e;
+        coopInteract = true;
+    }
+    const climb = function(e: boolean){
+        matchData.climb = e;
+        climbVal = e;
+        climbInteract = true;
+        lastAction = [...lastAction, {type:"climb",points:3, name: "Climb"}];
+    }
+    let lastRecordedL = false;
+    let leaveInteract = false;
+    let leaveVal = false;
+    var winBtn: any;
+    var tieBtn: any;
+    var tieBtnStyle = "";
+    var winBtnStyle = "";
     var climbBtn:any;
+    var climbBtnStyle = "";
     var sptlghtBtn:any;
+    var melodyBtn:any;
+    var ensembleBtn:any;
+    var coopertitionBtn:any;
+    var dqBtn:any;
+    var leaveBtn: any;
+    var leaveBtnStyle = "";
+    var ensembleBtnStyle = "";
+    var dqBtnStyle = "";
+    var coopertitionBtnStyle = "";
+    var melodyBtnStyle = "";
     var sptlghtBtnStyle = "";
     $: {
         if(matchData.harmony == true){
-            climbBtn.style["background-color"]="rgb(4, 201, 7)";
-        }else if(matchData.climb == true){
-            climbBtn.style["background-color"]="rgb(214, 4, 4)";
+            climbBtnStyle="background-color:rgb(4, 201, 7)";
+        }else if(matchData.climb == false){
+            climbBtnStyle = "background-color:rgb(234 89 31 / var(--tw-bg-opacity))";
+        }else if(matchData.harmony == false){
+            climbBtnStyle = "background-color:rgb(214,4,4)";
         }
         if(matchData.spotlight == true){
             sptlghtBtnStyle="background-color:rgb(4, 201, 7)";
         }else{
             sptlghtBtnStyle="background-color:rgb(214, 4, 4)";
         }
+        if(matchData.left == true){
+            leaveBtnStyle = "background-color:rgb(4,201,7)";
+        }else{
+            leaveBtnStyle="background-color:rgb(214,4,4)";
+        }
+        if(matchFinished == true){
+            if(matchData.melody == true){
+                melodyBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                melodyBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.ensemble == true){
+                ensembleBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                ensembleBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.coopertition == true){
+                coopertitionBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                coopertitionBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.dq == true){
+                dqBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                dqBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.won == true){
+                winBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                winBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.park == true){
+                parkBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                parkBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.disabled == true){
+                disabledBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                disabledBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.tie == true){
+                tieBtnStyle="background-color:rgb(4, 201, 7)";
+            }else{
+                tieBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+        }
     }
-
+const harmony = function(e: boolean){
+    matchData.harmony = e;
+    matchData.score = points;
+    harmonyInteract = true;
+}
+const leave = function(e: boolean){
+    matchData.left = e;
+    matchData.score = points;
+    leaveVal = e;
+    leaveInteract = true;
+}
+$:  if(leaveInteract && lastRecordedL !== leaveVal){ 
+        if(leaveVal == true){
+            points+=2;
+            matchData.score = points;
+        }else if(leaveVal == false){
+            points-=2;
+            matchData.score = points;
+        }
+        lastRecordedL = leaveVal;
+    }
+var climbBtn:any;
+var sptlghtBtn:any;
+var sptlghtBtnStyle = "";
     $: {
         if(points < 0){
             points = 0;
@@ -248,15 +599,74 @@
         }
     }
 
-// function undo() {
-//     if(lastAction.length !== 0) {
-//         let action = lastAction[lastAction.length-1]
-//         switch(action) {
-//             case
-//         }
-//     }
-// }
+const undo = function() {
+    if(lastAction.length !== 0) {
+        let action = lastAction[lastAction.length-1]
+        switch(action.type) {
+            case "groundIntake":
+                intake(1, true, false);
+            break;
+            case "sourceIntake":
+                intake(0, true, false);
+            break;
+            case "speakerScore":
+                scoreSpeaker(false, true, false);
+            break;
+            case "chargedSpeakerScore":
+                scoreSpeaker(true, true, false);
+            break;
+            case "ampScore":
+                scoreAmp(true, false);
+            break;
+            case "climb":
+                matchData.climb = false;
+                matchData.harmony = false;
+                matchData.spotlight = false;
+                undone = [...undone, {type:"climb", points:-3, name: "Climb"}];
+                if(lastAction.length != 0) {
+                    lastAction.pop();
+                }
+                points-=3;
+                matchData.score = points;
+            break;
+        }
+        matchData.score = points;
+    }
+}
+const redo = function() {
+        if(undone.length !== 0) {
+            let action = undone[undone.length - 1];
+            switch(action.type) {
+                case "groundIntake":
+                    intake(1, false, true);
+                break;
+                case "sourceIntake":
+                    intake(0, false, true);
+                break;
+                case "speakerScore":
+                    scoreSpeaker(false, false, true);
+                break;
+                case "chargedSpeakerScore":
+                    scoreSpeaker(true, false, true);
+                break;
+                case "ampScore":
+                    scoreAmp(false, true);
+                break;
+                case "climb":
+                    matchData.climb = true;
+                    lastAction = [...lastAction, {type:"climb",points:3, name: "Climb"}];
+                    if(undone.length != 0) {
+                        undone.pop();
+                    }
+                    points+=3;
+                    matchData.score = points;
+                break;
+            }
+            matchData.score = points;
+        }
+    }
 
+    var thing2:any;
 </script>
 <style>
     label {
@@ -272,31 +682,40 @@
 </style>
 <div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
     <div class="flex pt-sm items-center justify-center" style="z-index:9999">
-    <button on:click={() => goto('/')} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
+    <button on:click={() => {if((matchStarted&&!matchFinished)||matchData!==emptyData){if(confirm("Are you sure you want to leave? Your match is not finished.")){summarize();goto('/')}}else{goto('/')}}} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
     </button>  
         <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
-        {#if matchStarted&&!matchFinished}
-            <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
-            {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}</b></span>
-        {/if}
-        {#if !(matchStarted&&matchFinished == false)} 
-           <b>Team {team}</b> 
-        {/if}
+        <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
+        {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}&nbsp;&nbsp;</b></span>
     </span>
     </div>
     <br><br><br>
     {#if matchStarted}
         <div class="flex pt-xl items-center justify-center">
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%] disabled:opacity-50 enabled:hover:opacity-85">Undo</button>
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%] disabled:opacity-50 enabled:hover:opacity-85">Redo</button>
-        </div>
+<button bind:this={thing2} class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{undo()}}>Undo{#if lastAction.length != 0}<br>{lastAction[lastAction.length - 1].name}{/if}</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{redo()}}>Redo{#if undone.length != 0}<br>{undone[undone.length - 1].name}{/if}</button>        
+</div>
+    {/if}
+    {#if matchFinished==true}
+        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.melody = !matchData.melody;melody(matchData.melody);}} bind:this={melodyBtn} style={melodyBtnStyle}>Melody</button>
+        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.coopertition = !matchData.coopertition;coop(matchData.coopertition);}} bind:this={coopertitionBtn} style={coopertitionBtnStyle}>Coopertition</button><br>
+        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.ensemble = !matchData.ensemble;ensemble(matchData.ensemble);}} bind:this={ensembleBtn} style={ensembleBtnStyle}>Ensemble</button>
+        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.park = !matchData.park;park(matchData.park);}} bind:this={parkBtn} style={parkBtnStyle}>Park</button><br>
+        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.dq = !matchData.dq;dq(matchData.dq)}} bind:this={dqBtn} style={dqBtnStyle}>Disqualified</button>
+        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.disabled = !matchData.disabled;disabled(matchData.disabled)}} bind:this={disabledBtn} style={disabledBtnStyle}>Disabled</button><br>
+        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.won = !matchData.won;win(matchData.won);}} bind:this={winBtn} style={winBtnStyle}>Win</button>
+        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.tie = !matchData.tie;tie(matchData.tie);}} bind:this={tieBtn} style={tieBtnStyle}>Tie</button>
+        <b class="flex text-3xl items-center justify-center text-eerie-black dark:text-floral-white">Penalties</b><br>
+        <span style="font-size:calc(var(--step-10) + var(--step-7))">&nbsp;&nbsp;</span>
+        <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.penalties.push({type:"red"})}}>█</b>
+        <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.penalties.push({type:"yellow"})}}>█</b><span style="font-size:calc(var(--step-10) + var(--step-10))">&nbsp;</span>
     {/if}
     <div class="flex pt-sm items-center justify-center">
-        {#if !matchStarted}
-            <button disabled={matchFinished} class="text-4xl text-floral-white text-center justify-center mt-64 bg-flame-500 px-md py-3xl rounded-md disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
+        {#if (!matchStarted)&&(!matchFinished)}
+            <button class="text-4xl text-floral-white text-center justify-center mt-64 bg-flame-500 px-md py-3xl rounded-md disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
         {/if}
     </div>
     {#if matchStarted}
@@ -316,7 +735,7 @@
             {#if matchPhase=="Teleop"}
             <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
             {/if}
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;hasIntaked=false;}}>Miss</button>
+            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={()=>{matchData.misses++;}}>Miss</button>
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
@@ -330,14 +749,14 @@
         </button>
         {/if}
         {#if matchPhase == "Auto" || matchPhase == "Pregame"}
-        <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" on:click|once={() => {points += 2; matchData.score = points;matchData.left = true;}}>Leave Zone</button>
+        <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" style={leaveBtnStyle} on:click={() => {matchData.left = !matchData.left;leave(matchData.left)}} bind:this={leaveBtn}>Leave Zone</button>
         {/if}
         {#if matchPhase == "Teleop"}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;climb(matchData.climb);}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn} style={climbBtnStyle}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
         {#if matchData.climb == true}
         <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
         {/if}
         {/if} 
         {/if}
-    </div>
+    </div><br><br>
 </div>

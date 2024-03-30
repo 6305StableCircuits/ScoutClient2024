@@ -1,5 +1,8 @@
 <script lang=ts>
     import { goto } from "$app/navigation";
+    import {savedData} from '$lib/stores';
+    import {get} from 'svelte/store';
+    var sD = get(savedData);
     //there was some stuff here, if you need it (i doubt you will), go to an older commit
 </script>
 
@@ -9,6 +12,6 @@
     </div>
     <div class="flex md:flex-row flex-col w-full flex-grow items-center bg-eerie-black dark:bg-floral-white">
         <button on:click={() => goto('/preGameInfo')} class="text-8xl w-full h-full md:border-r-[16px] md:border-b-0 border-b-8 text-eerie-black border-timberwolf dark:border-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center">Scout</button>
-        <button on:click={() => goto('/exportData')} class="text-8xl w-full h-full border-timberwolf dark:border-eerie-black text-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center">Export Data</button>
+        <button on:click={() => goto('/exportData')} disabled={sD.length == 0} class="text-8xl w-full h-full border-timberwolf dark:border-eerie-black text-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center disabled:bg-opacity-75">Export Data</button>
     </div>
 </div>
