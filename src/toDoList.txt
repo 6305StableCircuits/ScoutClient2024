@@ -2,10 +2,6 @@ High Priority (haven't started, or needs to be finished)
 
 *Double check points are correct [will be done once everything else is finished]*
 
-*Add trap button [not started yet]*
-
-*restyle climb menu [not started yet]*
-
 *save edited export data [being worked on]*
 
 *undo/redo [to be finished soon]*
@@ -15,6 +11,10 @@ High Priority (haven't started, or needs to be finished)
 *implement undo/redo for penalties [not started yet]*
 
 *make undo/redo remove/add back intake/shotlogs [not started yet]*
+
+restyle climb menu (Finished but it keeps moving to the left and I have no idea why🙁)
+
+trap button (Almost finished, needs to be implemented in export and undo/redo)
 
 park [almost finished, needs to be implemented in export] 
 
@@ -30,7 +30,7 @@ disabled [almost finished, needs to be implemented in export]
 
 disqualified [almost finished, needs to be implemented in export]
 
-cycle time [probably done, hasn't been tested yet] (Automatic calculation of time between picking up a note and shooting it)
+cycle time [probably done, hasn't been tested yet] (I tested it and it seems to be working fine)
 
 melody [almost finished, needs to be implemented in export]
 
@@ -48,3 +48,4 @@ undo/redo logs ground intake as source intake
 bugs (Low Priority)
 undo/redo incorrectly lists what it is undoing/redoing (at least when using the intake menus)
 confirmation prompt shows even with empty data or finished game
+summary incorrectly lists several things
