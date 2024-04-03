@@ -43,9 +43,7 @@ Ui overhaul [partially complete]
 
 bugs (High Priority):
 undo/redo seems to have some point value issues (charged score should change score more than regular score)
-undo/redo logs ground intake as source intake
 
 bugs (Low Priority)
-undo/redo incorrectly lists what it is undoing/redoing (at least when using the intake menus)
 confirmation prompt shows even with empty data or finished game
 summary incorrectly lists several things

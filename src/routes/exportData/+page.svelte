@@ -284,6 +284,17 @@
     let intakes:Array<any>;
     let incaps:Array<any>;
     let shots:Array<any>;
+    let wins:Array<any>;
+    let ties:Array<any>;
+    let coops:Array<any>;
+    let penalties:Array<any>;
+    let fouls:Array<any>;
+    let leaves:Array<any>;
+    let ensembles:Array<any>;
+    let melodies:Array<any>;
+    let techFouls:Array<any>;
+    let parks:Array<any>;
+    let dqs:Array<any>;
     onMount(()=>{
         loaded = true;
         loadDate = Date.now()+10;
@@ -300,6 +311,12 @@
             harmonies[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
             misses[thingthingthingthingthing].contenteditable = checks[thingthingthingthingthing];
             climbs[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
+            ties[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
+            coops[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
+            disables[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
+            wins[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
+            leaves[thingthingthingthingthing].disabled = !checks[thingthingthingthingthing];
+            
         }
     }
     var loadDate = 0;
@@ -431,6 +448,8 @@
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Climbed: <select bind:this={climbs[i]} disabled={!checks[i]}><option>{JSON.parse(JSON.stringify(datastuff)).climb.toString()}</option><option>{(!!!JSON.parse(JSON.stringify(datastuff)).climb).toString()}</option></select></span><br>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Harmony: <select bind:this={harmonies[i]} disabled={!checks[i]}><option>{JSON.parse(JSON.stringify(datastuff)).harmony.toString()}</option><option>{(!!!JSON.parse(JSON.stringify(datastuff)).harmony).toString()}</option></select></span><br>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spotlight: <select bind:this={spotlights[i]} disabled={!checks[i]}><option>{JSON.parse(JSON.stringify(datastuff)).spotlight.toString()}</option><option>{(!!!JSON.parse(JSON.stringify(datastuff)).spotlight).toString()}</option></select></span><br>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Trap: <select bind:this={traps[i]} disabled={!checks[i]}><option>{JSON.parse(JSON.stringify(datastuff)).trap.toString()}</option><option>{(!!!JSON.parse(JSON.stringify(datastuff)).trap).toString()}</option></select></span><br>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Win: <select bind:this={wins[i]} disabled={!checks[i]}><option>{JSON.parse(JSON.stringify(datastuff)).won.toString()}</option><option>{(!!!JSON.parse(JSON.stringify(datastuff)).won).toString()}</option></select></span><br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<details style='padding:none;display:inline;margin:none;'><summary>Intake Logs</summary><p bind:this={intakes[i]}>
                     {#each JSON.parse(JSON.stringify(datastuff)).intakeLogs as intakeThing, w}
                     {#if (intakeThing.type == "ground" || intakeThing.type == "source")}

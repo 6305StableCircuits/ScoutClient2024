@@ -49,16 +49,16 @@
             }
         },
         penalties: [
-            {},
+            <any>{},
         ],
         incapLogs:[
-            {},
+            <any>{},
         ],
         intakeLogs:[
-            {type: ""},
+            <any>{},
         ],
         shotLogs:[
-            {},
+            <any>{},
         ]
     };
     let emptyData = JSON.parse(JSON.stringify(matchData));
@@ -309,7 +309,7 @@
             }
             hasIntaked = true;
         } else {
-            lastAction = [...lastAction, {type: "sourceIntake", name: "Source Intake"}];
+            lastAction = [...lastAction, {type: (type == 0 ? "sourceIntake" : "groundIntake"), name: (type == 0 ? "Source Intake" : "Ground Intake")}];
             if(undone.length != 0) {
                 undone.pop();
             }
@@ -381,7 +381,26 @@
     let lastRecordedC = false;
     let lastRecordedP = false;
     let lastRecordedCl = false;
-    $: if(spotlightInteract && lastRecordedSL !== spotlightVal){
+    let lastRecordedTr = false;
+    let isFirstH = true;
+    let isFirstE = true;
+    let isFirstM = true;
+    let isFirstW = true;
+    let isFirstC = true;
+    let isFirstP = true;
+    let isFirstCl = true;
+    let isFirstT = true;
+    let isFirstSL = true
+    let isFirstL = true;
+    let isFirstD = true;
+    let isFirstDq = true;
+    let isFirstTr = true;
+    $: {
+        if(matchData.penalties.length > 1 && !matchData.penalties.includes({type:"red"}) || matchData.penalties.includes({type:"yellow"})){
+
+        }
+    }
+    $: if(spotlightInteract && lastRecordedSL !== matchData.spotlight && isFirstSL == false){
         if(spotlightVal == true){
             points+=1;
             matchData.score = points;
@@ -391,7 +410,7 @@
         }
         lastRecordedSL = spotlightVal;
     }
-    $: if(ensembleInteract && lastRecordedE !== ensembleVal){
+    $: if(ensembleInteract && lastRecordedE !== matchData.ensemble && isFirstE == false){
         if(ensembleVal == true){
             points+=1;
             matchData.score = points;
@@ -401,7 +420,7 @@
         }
         lastRecordedE = ensembleVal;
     }
-    $:  if(harmonyInteract && lastRecordedH !== harmonyVal){ 
+    $:  if(harmonyInteract && lastRecordedH !== matchData.harmony && isFirstH == false){ 
         if(harmonyVal == true){
             points+=2;
             matchData.score = points;
@@ -411,7 +430,7 @@
         }
         lastRecordedH = harmonyVal;
     }
-    $:  if(melodyInteract && lastRecordedM !== melodyVal){ 
+    $:  if(melodyInteract && lastRecordedM !== matchData.melody && isFirstM == false){ 
         if(melodyVal == true){
             points+=1;
             matchData.score = points;
@@ -421,7 +440,7 @@
         }
         lastRecordedM = melodyVal;
     }
-    $:  if(winInteract && lastRecordedW !== winVal){ 
+    $:  if(winInteract && lastRecordedW !== matchData.won && isFirstW == false){ 
         if(winVal == true){
             points+=2;
             matchData.score = points;
@@ -431,7 +450,7 @@
         }
         lastRecordedW = winVal;
     }
-    $:  if(tieInteract && lastRecordedT !== tieVal){ 
+    $:  if(tieInteract && lastRecordedT !== matchData.tie && isFirstT == false){ 
         if(tieVal == true){
             points+=1;
             matchData.score = points;
@@ -441,7 +460,7 @@
         }
         lastRecordedT = tieVal;
     }
-    $:  if(parkInteract && lastRecordedP !== parkVal){ 
+    $:  if(parkInteract && lastRecordedP !== matchData.park && isFirstP == false){ 
         if(parkVal == true){
             points+=1;
             matchData.score = points;
@@ -451,7 +470,7 @@
         }
         lastRecordedP = parkVal;
     }
-    $:  if(coopInteract && lastRecordedC !== coopVal){ 
+    $:  if(coopInteract && lastRecordedC !== matchData.coopertition && isFirstC == false){ 
         if(coopVal == true){
             points+=1;
             matchData.score = points;
@@ -461,82 +480,132 @@
         }
         lastRecordedC = coopVal;
     }
-    $:  if(climbInteract && lastRecordedCl !== climbVal){ 
-        if(climbVal == true){
+    $:  if(climbInteract && lastRecordedCl !== matchData.climb && isFirstCl == false){ 
+        if(matchData.climb == true){
             points+=3;
             matchData.score = points;
-        }else if(climbVal == false){
+        }else if(matchData.climb == false){
             points-=3;
             matchData.score = points;
         }
         lastRecordedCl = climbVal;
     }
-    $: if(trapInteract && lastRecordedSL !== trapVal){
-        if(trapVal == true){
+    $: if(trapInteract && lastRecordedTr !== matchData.trap && isFirstTr == false){
+        if(matchData.trap == true){
             points+=5;
             matchData.score = points;
-        }else if(trapVal == false){
+        }else if(matchData.trap == false){
             points-=5;
             matchData.score = points;
         }
-        lastRecordedSL = trapVal;
+        lastRecordedTr = trapVal;
     }
     const ensemble = function(e: boolean){
         matchData.ensemble = e;
         ensembleVal = e;
-        ensembleInteract = true;
+        if(isFirstE == true){
+            ensembleInteract = true;
+            isFirstE = false;
+        }
     }
     const spotlight = function(e: boolean){
         matchData.spotlight = e;
         spotlightVal = e;
-        spotlightInteract = true;
+        if(isFirstSL == true){
+            spotlightInteract = true;
+            isFirstSL = false;
+        }
     }
     const melody = function(e: boolean){
         matchData.melody = e;
         melodyVal = e;
-        melodyInteract = true;
+        if(isFirstM == true){
+            melodyInteract = true;
+            isFirstM = false;
+        }
     }
     const park = function(e: boolean){
         matchData.park = e;
         parkVal = e;
-        parkInteract = true;
+        if(isFirstP == true){
+            parkInteract = true;
+            isFirstP = false;
+        }
     }
     const win = function(e: boolean){
         matchData.won = e;
         winVal = e;
-        winInteract = true;
+        if(isFirstW == true){
+            winInteract = true;
+            isFirstW = false;
+        }
     }
     const tie = function(e: boolean){
         matchData.tie = e;
         tieVal = e;
-        tieInteract = true;
+        if(isFirstT == true){
+            tieInteract = true;
+            isFirstT = false;
+        }
     }
     const dq = function(e: boolean){
         matchData.dq = e;
         dqVal = e;
-        dqInteract = true;
+        if(isFirstDq == true){
+            dqInteract = true;
+            isFirstDq = false;
+        }
     }
     const disabled = function(e: boolean){
         matchData.disabled = e;
         disabledVal = e;
-        disabledInteract = true;
+        if(isFirstD == true){
+            disabledInteract = true;
+            isFirstD = false;
+        }
     }
     const coop = function(e: boolean){
         matchData.coopertition = e;
         coopVal = e;
-        coopInteract = true;
+        if(isFirstC == true){
+            coopInteract = true;
+            isFirstC = false;
+        }
     }
     const climb = function(e: boolean){
         matchData.climb = e;
         climbVal = e;
-        climbInteract = true;
+        if(isFirstCl == true){
+            climbInteract = true;
+            isFirstCl = false;
+        }
         lastAction = [...lastAction, {type:"climb",points:3, name: "Climb"}];
     }
     const trap = function(e: boolean){
         matchData.trap = e;
         matchData.score = points;
         trapVal = e;
-        trapInteract = true;
+        if(isFirstTr == true){
+            trapInteract = true;
+            isFirstTr = false;
+        }
+    }
+    const harmony = function(e: boolean){
+        matchData.harmony = e;
+        matchData.score = points;
+        if(isFirstH == true){
+            harmonyInteract = true;
+            isFirstH = false;
+        }
+    }
+    const leave = function(e: boolean){
+        matchData.left = e;
+        matchData.score = points;
+        leaveVal = e;
+        if(isFirstL == true){
+            leaveInteract = true;
+            isFirstL = false;
+        }
     }
     let lastRecordedL = false;
     let leaveInteract = false;
@@ -627,17 +696,6 @@
             }
         }
     }
-const harmony = function(e: boolean){
-    matchData.harmony = e;
-    matchData.score = points;
-    harmonyInteract = true;
-}
-const leave = function(e: boolean){
-    matchData.left = e;
-    matchData.score = points;
-    leaveVal = e;
-    leaveInteract = true;
-}
 $:  if(leaveInteract && lastRecordedL !== leaveVal){ 
         if(leaveVal == true){
             points+=2;
@@ -777,7 +835,7 @@ const redo = function() {
         <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.tie = !matchData.tie;tie(matchData.tie);}} bind:this={tieBtn} style={tieBtnStyle}>Tie</button>
         <b class="flex text-3xl items-center justify-center text-eerie-black dark:text-floral-white">Penalties</b><br>
         <span style="font-size:calc(var(--step-10) + var(--step-7))">&nbsp;&nbsp;</span>
-        <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.penalties.push({type:"red"})}}>█</b>
+        <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{if(!matchData.penalties.includes({type:"red"})){matchData.penalties.push({type:"red"})}else{if(matchData.penalties[0].type == "red"){}}}}>█</b>
         <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.penalties.push({type:"yellow"})}}>█</b><span style="font-size:calc(var(--step-10) + var(--step-10))">&nbsp;</span>
     {/if}
     <div class="flex pt-sm items-center justify-center">
@@ -806,6 +864,9 @@ const redo = function() {
         </div>
     {/if}
     <div class="flex pt-sm items-center justify-center">
+        {#if matchPhase == "Teleop"}
+        <span class="text-3xl">&nbsp;&nbsp;</span>
+        {/if}
         {#if matchStarted&&!matchFinished}
         {#if !isIncap}
         <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={() => incapTimer.start()}>Start Incap</button>
