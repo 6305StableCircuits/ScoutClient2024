@@ -14,7 +14,7 @@ High Priority (haven't started, or needs to be finished)
 
 restyle climb menu (Finished but it keeps moving to the left and I have no idea why🙁)
 
-trap button (Almost finished, needs to be implemented in export and undo/redo)
+trap button (Almost finished, needs to be implemented in export and undo/redo [undo redo no need implement])
 
 park [almost finished, needs to be implemented in export] 
 

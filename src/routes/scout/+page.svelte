@@ -753,10 +753,10 @@ const redo = function() {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
-    </button>  
+    </button>  <span style="color: rgb(74 71 67 / var(--tw-bg-opacity));">butts</span><!--haha i aaflip wrote butts i'm so mature-->
         <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
         <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
-        {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60))}:{String((timeRemaining) % 60).padStart(2, '0')}&nbsp;&nbsp;</b></span>
+        {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60)) < 0 ? 0 : Math.floor((timeRemaining / 60))}:{String((timeRemaining) % 60 < 0 ? 0 : timeRemaining%60).padStart(2, '0')}&nbsp;&nbsp;</b></span>
     </span>
     </div>
     <br><br><br>
