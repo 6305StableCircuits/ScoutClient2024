@@ -1,0 +1,6 @@
+{
+    "editor.maxTokenizationLineLength": 200000000,
+    "editor.semanticTokenColorCustomizations": {
+        
+    }
+}

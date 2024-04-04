@@ -15,7 +15,7 @@
         <h1 class="text-8xl text-center font-bold text-eerie-black dark:text-floral-white">Stable Scout 3.0</h1>
     </div>
     <div class="flex md:flex-row flex-col w-full flex-grow items-center bg-eerie-black dark:bg-floral-white">
-        <button on:click={() => goto('/preGameInfo')} class="text-8xl w-full h-full md:border-r-[16px] md:border-b-0 border-b-8 text-eerie-black border-timberwolf dark:border-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center">Scout</button>
+        <button on:click={() => {if(sD.length >= 1000){alert("Somehow, you have reached the limit of saved match sessions.");if(confirm("Would you like to clear your sessions?")){savedData.set([]);}}else{goto('/preGameInfo')}}} class="text-8xl w-full h-full md:border-r-[16px] md:border-b-0 border-b-8 text-eerie-black border-timberwolf dark:border-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center">Scout</button>
         <button on:click={() => goto('/exportData')} disabled={sD.length == 0} class={ sD.length==0 ? "text-8xl w-full h-full border-timberwolf dark:border-eerie-black text-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white mx-auto items-center disabled:bg-opacity-75" : "text-8xl w-full h-full border-timberwolf dark:border-eerie-black text-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto items-center disabled:bg-opacity-75 disabled:hover:bg-opacity-75"} id="exportuhhhh🍔">Export Data</button>
     </div>
 </div>

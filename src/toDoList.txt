@@ -1,49 +1,13 @@
 High Priority (haven't started, or needs to be finished)
 
-*Double check points are correct [will be done once everything else is finished]*
-
-*save edited export data [being worked on]*
-
-*undo/redo [to be finished soon]*
-
-*Add new items to export data (including, but not limited to: penalties, coopertition, park, melody, etc)*
-
-*implement undo/redo for penalties [not started yet]*
+*save edited export data [abandoned, not enough time and too many bugs]*
 
 *make undo/redo remove/add back intake/shotlogs [not started yet]*
-
-restyle climb menu (Finished but it keeps moving to the left and I have no idea why🙁)
-
-trap button (Almost finished, needs to be implemented in export and undo/redo [undo redo no need implement])
-
-park [almost finished, needs to be implemented in export] 
-
-coopertition [almost finished, needs to be implemented in export]
-
-ensemble [almost finished, needs to be implemented in export]
-
-win/loss/time [win almost finished, tie is almost finished] (Loss can be default)
-
-fouls/cards [cards(penalties) are almost finished, needs to be implemented in export, fouls have not been started]
-
-disabled [almost finished, needs to be implemented in export]
-
-disqualified [almost finished, needs to be implemented in export]
-
-cycle time [probably done, hasn't been tested yet] (I tested it and it seems to be working fine)
-
-melody [almost finished, needs to be implemented in export]
-
-penalties [almost finished, needs to be implemented in export] (I cannot interact with them but that could just be a me thing)
-
-
-Low Priority (backlog/is probably done)
-firebase [probably won't be done, export data will be implemented differently]
-Ui overhaul [partially complete]
 
 bugs (High Priority):
 undo/redo seems to have some point value issues (charged score should change score more than regular score)
 
 bugs (Low Priority)
-confirmation prompt shows even with empty data or finished game
+confirmation prompt shows even with finished game
 summary incorrectly lists several things
+checkmarks on exportdata do nothing [probably won't be fixed]

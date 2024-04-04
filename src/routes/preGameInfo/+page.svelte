@@ -1,13 +1,15 @@
 <script lang=ts>
     import { goto } from "$app/navigation";
     import { teamNum, roundNum, alliance, scouterName } from "$lib/stores.js";
+    import {get} from "svelte/store";
     var team: number;
     var color = 'Red';
-    var scouter = "";
+    var scouter = get(scouterName) == "" ? "" : get(scouterName);
     var round = 0;
     var teamVal = "";
     var roundVal = "";
     var niceReg = /(69|420)+/g; //ye i know regexes i'm so cool
+    var colorInteract = false;
     const saveData = function(){
         teamNum.set(+team);
         alliance.set(color);
@@ -70,16 +72,28 @@
         <label for="team" class="text-eerie-black dark:text-floral-white">Team</label>&nbsp;&nbsp;<input type="number" bind:value={team} name="team" min="0" max="99999"><br>
         <label for="scouter" class="text-eerie-black dark:text-floral-white">Scouter Name</label>&nbsp;&nbsp;<input type="text" bind:value={scouter} name="scouter" on:keydown={(e)=>{doThing(e)}} autocorrect="false"><br>
         <label for="round" class="text-eerie-black dark:text-floral-white">Round</label>&nbsp;&nbsp;<input type="number" bind:value={round} name="round"><br>
-        <label for="color" class="text-eerie-black dark:text-floral-white">Color</label>&nbsp;&nbsp;<select name="color" bind:value={color}><option>Red</option><option>Blue</option></select><br>
-        <center><button id="start" on:click={()=>{saveData();goto('/scout')}} class="text-l bg-eerie-black text-floral-white px-md py-sm rounded-xl mx-sm hover:bg-opacity-85 w-[20%]">Start</button></center>
+        <label for="color" class="text-eerie-black dark:text-floral-white">Color</label>&nbsp;&nbsp;<select name="color" bind:value={color} on:input={()=>{colorInteract = true;}}><option>Red</option><option>Blue</option></select><br>
+        <center><button id="start" on:click={()=>{saveData();if(scouter.toLowerCase() == "friskv2"){alert("Okay, you asked for it...");window.location.href="/friskv2"}else{goto('/scout')}}} class="text-l bg-eerie-black text-floral-white px-md py-sm rounded-xl mx-sm hover:bg-opacity-85 w-[20%]">Start</button></center>
         {#if teamVal == "6305"}
         <b class="text-eerie-black dark:text-floral-white">That's us!</b><br>
         {/if}
         {#if scouter.toLowerCase() == "test"} <!--Definitely not a name i use when testing-->
         <b class="text-eerie-black dark:text-floral-white">I knew it! You're one of those computer nerds, aren't you?</b><br>
         {/if}
+        {#if colorInteract == true}
+        <b class="text-eerie-black dark:text-floral-white">[Insert political opinion here]</b><br>
+        {/if}
+        {#if roundVal == "42" || teamVal == "42"}
+        <b class="text-eerie-black dark:text-floral-white">The Answer to the Ultimate Question of Life, the Universe, and Everything.</b><br>
+        {/if}
+        {#if roundVal == "43" || teamVal == "43"}
+        <b class="text-eerie-black dark:text-floral-white">So long, and thanks for all the fish.</b><br> <!--idk its just 1 more than 42 so heres another hitchhikers reference-->
+        {/if}
         {#if niceReg.test(roundVal) || niceReg.test(teamVal)}
         <b class="text-eerie-black dark:text-floral-white">Haha nice</b><br>
+        {/if}
+        {#if scouter.toLowerCase() == "friskv2"}
+        <b class="text-eerie-black dark:text-floral-white">WARNING: This name will actually make your life hell. Proceed anyway?</b>
         {/if}
         {#if scouter.toLowerCase()=="frisk"}
         <b class="text-eerie-black dark:text-floral-white">WARNING: This name will make your life hell. Proceed anyway?</b>
@@ -114,6 +128,6 @@
         {#if scouter.toLowerCase() == "napsta"||scouter.toLowerCase()=="blooky"}
         <b class="text-eerie-black dark:text-floral-white">............ (They are powerless to stop you.)</b>
         {/if}
-        <div id="thing" bind:this={thing}></div>
+        <div id="thing" bind:this={thing}></div> <!--75% of the code definitely isn't just easter eggs, the doom game and all the undertale references are definitely essential-->
     </div>
 </div>

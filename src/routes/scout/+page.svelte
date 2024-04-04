@@ -1,12 +1,12 @@
 
 <script lang=ts>
-	import { disableScrollHandling, goto } from "$app/navigation";
+	import { goto } from "$app/navigation";
 	import { Timer } from "$lib/classes/Timer";
     import { get } from 'svelte/store';
     import { teamNum, roundNum, alliance, scouterName, savedData } from "$lib/stores.js";
     import {asLongAs} from '$lib/aslongas';
 	import Layout from "../+layout.svelte";
-    let team = 0;
+    let team = 0; //the 170 line text wall of variables commences. you cannot escape it. do not try to escape it. it is too late for you. pray to whoever you believe in. call your parents, for once. tell them goodbye, and what you had for lunch. i had a sandwich.
     let round = 0;
     let allianceColor = "";
     let points: number = 0;
@@ -40,6 +40,10 @@
         won: false,
         tie: false,
         misses: 0,
+        foul: false,
+        techFoul: false,
+        redCard: false,
+        yellowCard: false,
         summary: {
             text: "",
             preferences: {
@@ -48,9 +52,6 @@
                 scoreAuto: false,
             }
         },
-        penalties: [
-            <any>{},
-        ],
         incapLogs:[
             <any>{},
         ],
@@ -61,7 +62,6 @@
             <any>{},
         ]
     };
-    let emptyData = JSON.parse(JSON.stringify(matchData));
     savedData.subscribe(value => {
         saveData = value;
     })
@@ -73,6 +73,110 @@
     matchData.color = allianceColor;
     scouter = get(scouterName);
     matchData.scouter = scouter;
+    let matchStarted: Boolean = false;
+    let matchTime: number = 150;
+    let isIncap: Boolean = false;
+    let startIncap: number;
+    let endIncap: number;
+    let hasIntaked: Boolean = false;
+    let isCharge: Boolean = false;
+    let timeRemaining = 150;
+    let stopwatch: number = 0;
+    let action: String = "";
+    let lastAction: Array<any> = [];
+    let undone: Array<any> = [];
+    var thingthing = 0;
+    var grounds = 0;
+    var sources = 0;
+    var thingthingthingthingthingthing = 0;
+    var speakers = 0;
+    var amps = 0;
+    let melodyInteract = false;
+    let melodyVal = false;
+    let winVal = false;
+    let winInteract = false;
+    let parkVal = false;
+    let dqVal = false;
+    let dqInteract = false;
+    let parkInteract = false;
+    let parkBtn: any;
+    let parkBtnStyle = "";
+    let tieVal = false;
+    let tieInteract = false;
+    let coopVal = false;
+    let coopInteract = false;
+    let disabledInteract = false;
+    let disabledBtn:any;
+    let disabledVal = false;
+    let climbInteract = false;
+    let climbVal = false;
+    let disabledBtnStyle = "";
+    let ensembleInteract = false;
+    let ensembleVal = false;
+    let spotlightInteract = false;
+    let harmonyInteract = false;
+    let harmonyVal = false;
+    let spotlightVal = false;
+    let trapVal = false;
+    let trapInteract = false;
+    let lastRecordedSL = false;
+    let lastRecordedE = false;
+    let lastRecordedH = false;
+    let lastRecordedW = false;
+    let lastRecordedM = false;
+    let lastRecordedT = false;
+    let lastRecordedC = false;
+    let lastRecordedP = false;
+    let lastRecordedCl = false;
+    let lastRecordedTr = false;
+    let isFirstH = true;
+    let isFirstE = true;
+    let isFirstM = true;
+    let isFirstW = true;
+    let isFirstC = true;
+    let isFirstP = true;
+    let isFirstCl = true;
+    let isFirstT = true;
+    let isFirstSL = true
+    let isFirstL = true;
+    let isFirstD = true;
+    let isFirstDq = true;
+    let isFirstTr = true;
+    let lastRecordedL = false;
+    let leaveInteract = false;
+    let leaveVal = false;
+    var winBtn: any;
+    var tieBtn: any;
+    var tieBtnStyle = "";
+    var winBtnStyle = "";
+    var climbBtn:any;
+    var climbBtnStyle = "";
+    var sptlghtBtn:any;
+    var melodyBtn:any;
+    var ensembleBtn:any;
+    var coopertitionBtn:any;
+    var dqBtn:any;
+    var leaveBtn: any;
+    var trapBtn: any;
+    var leaveBtnStyle = "";
+    var ensembleBtnStyle = "";
+    var dqBtnStyle = "";
+    var coopertitionBtnStyle = "";
+    var melodyBtnStyle = "";
+    var sptlghtBtnStyle = "";
+    var trapBtnStyle = "";
+    var foulBtn:any;
+    var foulBtnStyle = "";
+    var tfoulBtn:any;
+    var tfoulBtnStyle = "";
+    var foulVal = false;
+    var tfoulVal = false;
+    var foulInteract = false;
+    var tfoulInteract = false;
+    var isFirstF = true;
+    var isFirstTF = true;
+    var lastRecordedF = false;
+    var lastRecordedTF = false;
     $: {
         for(duplicheck = 0; duplicheck < saveData.length; duplicheck++){
             if(saveData[duplicheck].id == matchData.id){
@@ -86,18 +190,6 @@
         }
         savedData.set(saveData);
     }
-    let matchStarted: Boolean = false;
-    let matchTime: number = 150;
-    let isIncap: Boolean = false;
-    let startIncap: number;
-    let endIncap: number;
-    let hasIntaked: Boolean = false;
-    let isCharge: Boolean = false;
-    let timeRemaining = 150;
-    let stopwatch: number = 0;
-    let action: String = "";
-    let lastAction: Array<any> = [];
-    let undone: Array<any> = [];
     let matchTimer = new Timer("matchTimer", {
         onStart() {
             matchData.startTime = Date().toLocaleString();
@@ -126,12 +218,6 @@
             matchFinished = true;
         }
     });
-    var thingthing = 0;
-    var grounds = 0;
-    var sources = 0;
-    var thingthingthingthingthingthing = 0;
-    var speakers = 0;
-    var amps = 0;
     const summarize = function(){ //better than chatgpt
             for(thingthing = 0; thingthing < matchData.intakeLogs.length; thingthing++){
                 if((matchData.intakeLogs[thingthing]).type == "ground"){
@@ -344,62 +430,6 @@
             }
         }
     }
-    let melodyInteract = false;
-    let melodyVal = false;
-    let winVal = false;
-    let winInteract = false;
-    let parkVal = false;
-    let dqVal = false;
-    let dqInteract = false;
-    let parkInteract = false;
-    let parkBtn: any;
-    let parkBtnStyle = "";
-    let tieVal = false;
-    let tieInteract = false;
-    let coopVal = false;
-    let coopInteract = false;
-    let disabledInteract = false;
-    let disabledBtn:any;
-    let disabledVal = false;
-    let climbInteract = false;
-    let climbVal = false;
-    let disabledBtnStyle = "";
-    let ensembleInteract = false;
-    let ensembleVal = false;
-    let spotlightInteract = false;
-    let harmonyInteract = false;
-    let harmonyVal = false;
-    let spotlightVal = false;
-    let trapVal = false;
-    let trapInteract = false;
-    let lastRecordedSL = false;
-    let lastRecordedE = false;
-    let lastRecordedH = false;
-    let lastRecordedW = false;
-    let lastRecordedM = false;
-    let lastRecordedT = false;
-    let lastRecordedC = false;
-    let lastRecordedP = false;
-    let lastRecordedCl = false;
-    let lastRecordedTr = false;
-    let isFirstH = true;
-    let isFirstE = true;
-    let isFirstM = true;
-    let isFirstW = true;
-    let isFirstC = true;
-    let isFirstP = true;
-    let isFirstCl = true;
-    let isFirstT = true;
-    let isFirstSL = true
-    let isFirstL = true;
-    let isFirstD = true;
-    let isFirstDq = true;
-    let isFirstTr = true;
-    $: {
-        if(matchData.penalties.length > 1 && !matchData.penalties.includes({type:"red"}) || matchData.penalties.includes({type:"yellow"})){
-
-        }
-    }
     $: if(spotlightInteract && lastRecordedSL !== matchData.spotlight && isFirstSL == false){
         if(spotlightVal == true){
             points+=1;
@@ -539,6 +569,10 @@
             winInteract = true;
             isFirstW = false;
         }
+        if(matchData.tie == true && e == true){
+            matchData.tie = false;
+            tieVal = false;
+        }
     }
     const tie = function(e: boolean){
         matchData.tie = e;
@@ -546,6 +580,10 @@
         if(isFirstT == true){
             tieInteract = true;
             isFirstT = false;
+        }
+        if(matchData.won == true && e == true){
+            matchData.won = false;
+            winVal = false;
         }
     }
     const dq = function(e: boolean){
@@ -607,29 +645,24 @@
             isFirstL = false;
         }
     }
-    let lastRecordedL = false;
-    let leaveInteract = false;
-    let leaveVal = false;
-    var winBtn: any;
-    var tieBtn: any;
-    var tieBtnStyle = "";
-    var winBtnStyle = "";
-    var climbBtn:any;
-    var climbBtnStyle = "";
-    var sptlghtBtn:any;
-    var melodyBtn:any;
-    var ensembleBtn:any;
-    var coopertitionBtn:any;
-    var dqBtn:any;
-    var leaveBtn: any;
-    var trapBtn: any;
-    var leaveBtnStyle = "";
-    var ensembleBtnStyle = "";
-    var dqBtnStyle = "";
-    var coopertitionBtnStyle = "";
-    var melodyBtnStyle = "";
-    var sptlghtBtnStyle = "";
-    var trapBtnStyle = "";
+    const foul = function(e: boolean){
+        matchData.foul = e;
+        matchData.score = points;
+        foulVal = e;
+        if(isFirstF == true){
+            foulInteract = true;
+            isFirstF = false;
+        }
+    }
+    const techFoul = function(e: boolean){
+        matchData.techFoul = e;
+        matchData.score = points;
+        tfoulVal = e;
+        if(isFirstTF == true){
+            tfoulInteract = true;
+            isFirstTF = false;
+        }
+    }
     $: {
         if(matchData.harmony == true){
             climbBtnStyle="background-color:rgb(4, 201, 7)";
@@ -693,6 +726,16 @@
                 tieBtnStyle="background-color:rgb(4, 201, 7)";
             }else{
                 tieBtnStyle="background-color:rgb(214, 4, 4)";
+            }
+            if(matchData.techFoul == true){
+                tfoulBtnStyle = "background-color:rgb(4,201,7)";
+            }else{
+                tfoulBtnStyle = "background-color:rgb(214,4,4)";
+            }
+            if(matchData.foul == true){
+                foulBtnStyle = "background-color:rgb(4,201,7)";
+            }else{
+                foulBtnStyle = "background-color:rgb(214,4,4)";
             }
         }
     }
@@ -792,6 +835,52 @@ const redo = function() {
     }
 
     var thing2:any;
+    let emptyData = {
+        id: id,
+        team: team,
+        scouter: scouter,
+        color: allianceColor,
+        round: round,
+        harmony: false,
+        climb: false,
+        startTime: "",
+        score: 0,
+        autoScore: 0,
+        teleopScore: 0,
+        left: false,
+        spotlight: false,
+        trap: false,
+        melody: false,
+        ensemble: false,
+        coopertition: false,
+        dq: false,
+        disabled: false,
+        park: false,
+        won: false,
+        tie: false,
+        misses: 0,
+        foul: false,
+        techFoul: false,
+        redCard: false,
+        yellowCard: false,
+        summary: {
+            text: "",
+            preferences: {
+                intake: "",
+                score: "",
+                scoreAuto: false,
+            }
+        },
+        incapLogs:[
+            <any>{},
+        ],
+        intakeLogs:[
+            <any>{},
+        ],
+        shotLogs:[
+            <any>{},
+        ]
+    };
 </script>
 <style>
     label {
@@ -805,91 +894,222 @@ const redo = function() {
         cursor: default;
     }
 </style>
+{#if scouter.toLowerCase() == "frisk"}
 <div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
     <div class="flex pt-sm items-center justify-center" style="z-index:9999">
-    <button on:click={() => {if((matchStarted && !matchFinished)||matchData!==emptyData){if(confirm("Are you sure you want to leave? Your match is not finished.")){summarize();goto('/')}}else{goto('/')}}} class="text-eerie-black dark:text-floral-white bg-floral-white dark:bg-black-olive rounded-2xl hover:bg-light-hover dark:hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
+    <button on:dblclick={() => {if((matchStarted&&!matchFinished)||(JSON.stringify(matchData)!==JSON.stringify(emptyData)&&matchStarted)){console.log(JSON.stringify(matchData));console.log(JSON.stringify(emptyData));console.log(JSON.stringify(emptyData) == JSON.stringify(matchData));console.log(matchFinished);if(confirm("Are you sure you want to leave? Your match is not finished.")){summarize();goto('/')}}else{goto('/')}}} class="text-floral-white bg-black-olive rounded-2xl hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
     </button>  <span style="color: rgb(74 71 67 / var(--tw-bg-opacity));">butts</span><!--haha i aaflip wrote butts i'm so mature-->
-        <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
-        <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
-        {#if matchPhase=="Auto"}&nbsp;&nbsp;&nbsp;&nbsp;{/if}{#if matchPhase=="Teleop"}&nbsp;&nbsp;{/if}{#if matchPhase=="Pregame"}&nbsp;&nbsp;{/if}{matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60)) < 0 ? 0 : Math.floor((timeRemaining / 60))}:{String((timeRemaining) % 60 < 0 ? 0 : timeRemaining%60).padStart(2, '0')}&nbsp;&nbsp;</b></span>
-    </span>
+    <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
+    <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
+    {#if matchPhase=="Auto"}
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    {/if}
+    {#if matchPhase=="Teleop"}
+    &nbsp;&nbsp;
+    {/if}
+    {#if matchPhase=="Pregame"}
+    &nbsp;&nbsp;
+    {/if}
+    {matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60)) < 0 ? 0 : Math.floor((timeRemaining / 60))}:{String((timeRemaining) % 60 < 0 ? 0 : timeRemaining%60).padStart(2, '0')}&nbsp;&nbsp;</b></span>
+</span>
+</div>
+<br><br><br>
+{#if matchStarted}
+    <div class="flex pt-xl items-center justify-center">
+<button bind:this={thing2} class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{undo()}}>Undo{#if lastAction.length != 0}<br>{lastAction[lastAction.length - 1].name}{/if}</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{redo()}}>Redo{#if undone.length != 0}<br>{undone[undone.length - 1].name}{/if}</button>        
+</div>
+{/if}
+{#if matchFinished==true}
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.melody = !matchData.melody;melody(matchData.melody);}} bind:this={melodyBtn} style={melodyBtnStyle}>Melody</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.coopertition = !matchData.coopertition;coop(matchData.coopertition);}} bind:this={coopertitionBtn} style={coopertitionBtnStyle}>Coopertition</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.ensemble = !matchData.ensemble;ensemble(matchData.ensemble);}} bind:this={ensembleBtn} style={ensembleBtnStyle}>Ensemble</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.park = !matchData.park;park(matchData.park);}} bind:this={parkBtn} style={parkBtnStyle}>Park</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.dq = !matchData.dq;dq(matchData.dq)}} bind:this={dqBtn} style={dqBtnStyle}>Disqualified</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.disabled = !matchData.disabled;disabled(matchData.disabled)}} bind:this={disabledBtn} style={disabledBtnStyle}>Disabled</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.won = !matchData.won;win(matchData.won);}} bind:this={winBtn} style={winBtnStyle}>Win</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.tie = !matchData.tie;tie(matchData.tie);}} bind:this={tieBtn} style={tieBtnStyle}>Tie</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.foul = !matchData.foul;foul(matchData.foul);}} bind:this={foulBtn} style={foulBtnStyle}>Foul</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.techFoul = !matchData.techFoul;techFoul(matchData.techFoul);}} bind:this={tfoulBtn} style={tfoulBtnStyle}>Tech Foul</button><br>
+    <br>
+    <b class="flex text-3xl items-center justify-center text-floral-white">Penalties</b>
+    <br><br>
+    <span style="font-size:calc(var(--step-10) + var(--step-7))">&nbsp;&nbsp;</span>
+    <b aria-hidden="true" style={matchData.redCard == true ? "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4);background-color:rgb(4,201,7);" : "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4)"} class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.redCard = !matchData.redCard;}}>█</b>
+    <b aria-hidden="true" style={matchData.yellowCard == true ? "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25);background-color:rgb(4,201,7)" : "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25)"} class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:dblclick={()=>{matchData.yellowCard = !matchData.yellowCard}}>█</b><span style="font-size:calc(var(--step-10) + var(--step-10))">&nbsp;</span>
+{/if}
+<div class="flex pt-sm items-center justify-center">
+    {#if (!matchStarted)&&(!matchFinished)}
+        <button class="text-4xl text-floral-white text-center justify-center mt-64 bg-flame-500 px-md py-3xl rounded-md disabled:opacity-50 hover:opacity-85" on:dblclick={() => matchTimer.start()}>Start Match</button>
+    {/if}
+</div>
+{#if matchStarted}
+{#if !hasIntaked&&!matchFinished}
+<div class="flex pt-sm items-center justify-center">
+    <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-3xl rounded-lg mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:dblclick={()=>{intake(1)}}>Ground Intake</button>
+    <button disabled={autoInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-3xl rounded-lg mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:dblclick={()=>{intake(0)}}>Source Intake</button>
+</div>
+{/if}
+{/if}
+{#if matchStarted&&hasIntaked&&!matchFinished}
+    <div class="flex pt-sm items-center justify-center">
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:dblclick={() => scoreAmp()}>Amp Score</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:dblclick={() => scoreSpeaker(isCharge = false)}>Speaker Score</button>
     </div>
-    <br><br><br>
-    {#if matchStarted}
-        <div class="flex pt-xl items-center justify-center">
+    <div class="flex pt-md items-center justify-center">
+        {#if matchPhase=="Teleop"}
+        <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:dblclick={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
+        {/if}
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:dblclick={() => noteMiss()}>Miss</button>
+    </div>
+{/if}
+<div class="flex pt-sm items-center justify-center">
+    {#if matchPhase == "Teleop"}
+    <span class="text-3xl">&nbsp;&nbsp;</span>
+    {/if}
+    {#if matchStarted&&!matchFinished}
+    {#if !isIncap}
+    <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:dblclick={() => incapTimer.start()}>Start Incap</button>
+    {/if}
+    {#if isIncap}
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:opacity-85 w-[40%]" on:dblclick={() => incapTimer.stop()}>
+        {Math.floor(((stopwatch) / 60))}:{String((stopwatch) % 60).padStart(2, '0')}<br>End
+    </button>
+    {/if}
+    {#if matchPhase == "Auto" || matchPhase == "Pregame"}
+    <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" style={leaveBtnStyle} on:dblclick={() => {matchData.left = !matchData.left;leave(matchData.left)}} bind:this={leaveBtn}>Leave Zone</button>
+    {/if}
+    <div class="relative">
+    {#if matchPhase == "Teleop"}
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:dblclick={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;climb(matchData.climb);}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn} style={climbBtnStyle}>
+        {#if matchData.climb == false}Climb Menu{/if}
+        {#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}
+    </button>
+    <div class="bottom-0">
+    {#if matchData.climb == true}
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:dblclick={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:dblclick={()=>{matchData.trap = !matchData.trap;trap(matchData.trap)}} bind:this={trapBtn} style={trapBtnStyle}>Trap</button>
+    {/if}
+    </div>
+    {/if}
+    </div>
+    {/if}
+</div><br><br>
+</div>
+{:else}
+{#if scouter.toLowerCase() == "sans"}
+<style>
+    *{
+        font-family:cursive;
+    }
+</style>
+{/if}
+<div class="bg-black-olive h-screen md:border-[16px] border-8 border-eerie-black">
+    <div class="flex pt-sm items-center justify-center" style="z-index:9999">
+    <button on:click={() => {if((matchStarted&&!matchFinished)||(JSON.stringify(matchData)!==JSON.stringify(emptyData)&&matchStarted)){console.log(JSON.stringify(matchData));console.log(JSON.stringify(emptyData));console.log(JSON.stringify(emptyData) == JSON.stringify(matchData));if(confirm("Are you sure you want to leave? Your match is not finished.")){summarize();goto('/')}}else{goto('/')}}} class="text-floral-white bg-black-olive rounded-2xl hover:bg-dark-hover absolute left-5 top-2.5" style="z-index:9999999">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-2xl h-2xl">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+    </button>  <span style="color: rgb(74 71 67 / var(--tw-bg-opacity));">butts</span><!--haha i aaflip wrote butts i'm so mature-->
+    <span class="text-3xl text-floral-white text-center px-md py-sm absolute top-0 md:border-[16px] border-8 border-eerie-black w-full" id="matchTimer"> 
+    <b style="border-bottom: 0.1em solid #ffffff; line-height: 0.1em;"><span>Team: {team}</span></b><br>
+    {#if matchPhase=="Auto"}
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    {/if}
+    {#if matchPhase=="Teleop"}
+    &nbsp;&nbsp;
+    {/if}
+    {#if matchPhase=="Pregame"}
+    &nbsp;&nbsp;
+    {/if}
+    {matchPhase} <span class="text-6xl">|</span> Score: {points} <span style="right:0;" class="absolute text-5xl"><b style="position:relative;bottom:25px">{Math.floor(((timeRemaining) / 60)) < 0 ? 0 : Math.floor((timeRemaining / 60))}:{String((timeRemaining) % 60 < 0 ? 0 : timeRemaining%60).padStart(2, '0')}&nbsp;&nbsp;</b></span>
+</span>
+</div>
+<br><br><br>
+{#if matchStarted}
+    <div class="flex pt-xl items-center justify-center">
 <button bind:this={thing2} class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{undo()}}>Undo{#if lastAction.length != 0}<br>{lastAction[lastAction.length - 1].name}{/if}</button>
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{redo()}}>Redo{#if undone.length != 0}<br>{undone[undone.length - 1].name}{/if}</button>        
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-md rounded-lg mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{redo()}}>Redo{#if undone.length != 0}<br>{undone[undone.length - 1].name}{/if}</button>        
 </div>
+{/if}
+{#if matchFinished==true}
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.melody = !matchData.melody;melody(matchData.melody);}} bind:this={melodyBtn} style={melodyBtnStyle}>Melody</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.coopertition = !matchData.coopertition;coop(matchData.coopertition);}} bind:this={coopertitionBtn} style={coopertitionBtnStyle}>Coopertition</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.ensemble = !matchData.ensemble;ensemble(matchData.ensemble);}} bind:this={ensembleBtn} style={ensembleBtnStyle}>Ensemble</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.park = !matchData.park;park(matchData.park);}} bind:this={parkBtn} style={parkBtnStyle}>Park</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.dq = !matchData.dq;dq(matchData.dq)}} bind:this={dqBtn} style={dqBtnStyle}>Disqualified</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.disabled = !matchData.disabled;disabled(matchData.disabled)}} bind:this={disabledBtn} style={disabledBtnStyle}>Disabled</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.won = !matchData.won;win(matchData.won);}} bind:this={winBtn} style={winBtnStyle}>Win</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.tie = !matchData.tie;tie(matchData.tie);}} bind:this={tieBtn} style={tieBtnStyle}>Tie</button><br>
+    &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.foul = !matchData.foul;foul(matchData.foul);}} bind:this={foulBtn} style={foulBtnStyle}>Foul</button>
+    <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.techFoul = !matchData.techFoul;techFoul(matchData.techFoul);}} bind:this={tfoulBtn} style={tfoulBtnStyle}>Tech Foul</button><br>
+    <br>
+    <b class="flex text-3xl items-center justify-center text-floral-white">Penalties</b>
+    <br><br>
+    <span style="font-size:calc(var(--step-10) + var(--step-7))">&nbsp;&nbsp;</span>
+    <b aria-hidden="true" style={matchData.redCard == true ? "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4);background-color:rgb(4,201,7);" : "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4)"} class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.redCard = !matchData.redCard;}}>█</b>
+    <b aria-hidden="true" style={matchData.yellowCard == true ? "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25);background-color:rgb(4,201,7)" : "font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25)"} class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.yellowCard = !matchData.yellowCard}}>█</b><span style="font-size:calc(var(--step-10) + var(--step-10))">&nbsp;</span>
+{/if}
+<div class="flex pt-sm items-center justify-center">
+    {#if (!matchStarted)&&(!matchFinished)}
+        <button class="text-4xl text-floral-white text-center justify-center mt-64 bg-flame-500 px-md py-3xl rounded-md disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
     {/if}
-    {#if matchFinished==true}
-        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.melody = !matchData.melody;melody(matchData.melody);}} bind:this={melodyBtn} style={melodyBtnStyle}>Melody</button>
-        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.coopertition = !matchData.coopertition;coop(matchData.coopertition);}} bind:this={coopertitionBtn} style={coopertitionBtnStyle}>Coopertition</button><br>
-        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.ensemble = !matchData.ensemble;ensemble(matchData.ensemble);}} bind:this={ensembleBtn} style={ensembleBtnStyle}>Ensemble</button>
-        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.park = !matchData.park;park(matchData.park);}} bind:this={parkBtn} style={parkBtnStyle}>Park</button><br>
-        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.dq = !matchData.dq;dq(matchData.dq)}} bind:this={dqBtn} style={dqBtnStyle}>Disqualified</button>
-        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.disabled = !matchData.disabled;disabled(matchData.disabled)}} bind:this={disabledBtn} style={disabledBtnStyle}>Disabled</button><br>
-        &nbsp;&nbsp;<button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.won = !matchData.won;win(matchData.won);}} bind:this={winBtn} style={winBtnStyle}>Win</button>
-        <button class="text-2xl bg-flame-500 text-floral-white px-md py-md rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.tie = !matchData.tie;tie(matchData.tie);}} bind:this={tieBtn} style={tieBtnStyle}>Tie</button>
-        <b class="flex text-3xl items-center justify-center text-eerie-black dark:text-floral-white">Penalties</b><br>
-        <span style="font-size:calc(var(--step-10) + var(--step-7))">&nbsp;&nbsp;</span>
-        <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(214, 4, 4)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{if(!matchData.penalties.includes({type:"red"})){matchData.penalties.push({type:"red"})}else{if(matchData.penalties[0].type == "red"){}}}}>█</b>
-        <b aria-hidden="true" style="font-size:calc(var(--step-10) + var(--step-10));margin-top:-100px;color:rgb(255,217,25)" class="padding-0 bg-none text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[40%]" on:click={()=>{matchData.penalties.push({type:"yellow"})}}>█</b><span style="font-size:calc(var(--step-10) + var(--step-10))">&nbsp;</span>
-    {/if}
-    <div class="flex pt-sm items-center justify-center">
-        {#if (!matchStarted)&&(!matchFinished)}
-            <button class="text-4xl text-floral-white text-center justify-center mt-64 bg-flame-500 px-md py-3xl rounded-md disabled:opacity-50 hover:opacity-85" on:click={() => matchTimer.start()}>Start Match</button>
-        {/if}
-    </div>
-    {#if matchStarted}
-    {#if !hasIntaked&&!matchFinished}
-    <div class="flex pt-sm items-center justify-center">
-        <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-3xl rounded-lg mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(1)}}>Ground Intake</button>
-        <button disabled={autoInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-3xl rounded-lg mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(0)}}>Source Intake</button>
-    </div>
-    {/if}
-    {/if}
-    {#if matchStarted&&hasIntaked&&!matchFinished}
-        <div class="flex pt-sm items-center justify-center">
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:click={() => scoreAmp()}>Amp Score</button>
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:click={() => scoreSpeaker(isCharge = false)}>Speaker Score</button>
-        </div>
-        <div class="flex pt-md items-center justify-center">
-            {#if matchPhase=="Teleop"}
-            <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
-            {/if}
-            <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => noteMiss()}>Miss</button>
-        </div>
-    {/if}
-    <div class="flex pt-sm items-center justify-center">
-        {#if matchPhase == "Teleop"}
-        <span class="text-3xl">&nbsp;&nbsp;</span>
-        {/if}
-        {#if matchStarted&&!matchFinished}
-        {#if !isIncap}
-        <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={() => incapTimer.start()}>Start Incap</button>
-        {/if}
-        {#if isIncap}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:opacity-85 w-[40%]" on:click={() => incapTimer.stop()}>
-            {Math.floor(((stopwatch) / 60))}:{String((stopwatch) % 60).padStart(2, '0')}<br>End
-        </button>
-        {/if}
-        {#if matchPhase == "Auto" || matchPhase == "Pregame"}
-        <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" style={leaveBtnStyle} on:click={() => {matchData.left = !matchData.left;leave(matchData.left)}} bind:this={leaveBtn}>Leave Zone</button>
-        {/if}
-        <div class="relative">
-        {#if matchPhase == "Teleop"}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;climb(matchData.climb);}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn} style={climbBtnStyle}>{#if matchData.climb == false}Climb Menu{/if}{#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}</button>
-        <div class="bottom-0">
-        {#if matchData.climb == true}
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:click={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
-        <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:click={()=>{matchData.trap = !matchData.trap;trap(matchData.trap)}} bind:this={trapBtn} style={trapBtnStyle}>Trap</button>
-        {/if}
-        </div>
-        {/if}
-        </div>
-        {/if}
-    </div><br><br>
 </div>
+{#if matchStarted}
+{#if !hasIntaked&&!matchFinished}
+<div class="flex pt-sm items-center justify-center">
+    <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-3xl rounded-lg mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(1)}}>Ground Intake</button>
+    <button disabled={autoInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-3xl rounded-lg mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={()=>{intake(0)}}>Source Intake</button>
+</div>
+{/if}
+{/if}
+{#if matchStarted&&hasIntaked&&!matchFinished}
+    <div class="flex pt-sm items-center justify-center">
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:click={() => scoreAmp()}>Amp Score</button>
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" on:click={() => scoreSpeaker(isCharge = false)}>Speaker Score</button>
+    </div>
+    <div class="flex pt-md items-center justify-center">
+        {#if matchPhase=="Teleop"}
+        <button disabled={autoInvalid} class="text-xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => scoreSpeaker(isCharge = true)}>Charged Speaker Score</button>
+        {/if}
+        <button class="text-4xl bg-flame-500 text-floral-white px-md py-lg rounded-lg mx-sm w-[40%] hover:bg-opacity-85" style="border:6px rgb(100, 100, 100) solid" on:click={() => noteMiss()}>Miss</button>
+    </div>
+{/if}
+<div class="flex pt-sm items-center justify-center">
+    {#if matchPhase == "Teleop"}
+    <span class="text-3xl">&nbsp;&nbsp;</span>
+    {/if}
+    {#if matchStarted&&!matchFinished}
+    {#if !isIncap}
+    <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm w-[40%] disabled:opacity-50 enabled:hover:opacity-85" on:click={() => incapTimer.start()}>Start Incap</button>
+    {/if}
+    {#if isIncap}
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm hover:opacity-85 w-[40%]" on:click={() => incapTimer.stop()}>
+        {Math.floor(((stopwatch) / 60))}:{String((stopwatch) % 60).padStart(2, '0')}<br>End
+    </button>
+    {/if}
+    {#if matchPhase == "Auto" || matchPhase == "Pregame"}
+    <button disabled={preGameInvalid} class="text-4xl bg-flame-500 text-floral-white px-md py-2xl rounded-lg mt-sm mx-sm disabled:opacity-50 enabled:hover:opacity-85 w-[40%]" style={leaveBtnStyle} on:click={() => {matchData.left = !matchData.left;leave(matchData.left)}} bind:this={leaveBtn}>Leave Zone</button>
+    {/if}
+    <div class="relative">
+    {#if matchPhase == "Teleop"}
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:click={(e) => {if(matchData.climb == false){e.stopImmediatePropagation();matchData.climb = true;climb(matchData.climb);}else{harmonyVal = !harmonyVal;harmony(harmonyVal);}}} bind:this={climbBtn} style={climbBtnStyle}>
+        {#if matchData.climb == false}Climb Menu{/if}
+        {#if matchData.climb == true}<input type="checkbox" name="harmony" style="display:none;"><label for="harmony"style="cursor:pointer" > Harmony</label>{/if}
+    </button>
+    <div class="bottom-0">
+    {#if matchData.climb == true}
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:click={()=>{matchData.spotlight = !matchData.spotlight;spotlight(matchData.spotlight)}} bind:this={sptlghtBtn} style={sptlghtBtnStyle}>Spotlight</button>
+    <button class="text-4xl bg-flame-500 text-floral-white px-md py-sm rounded-lg mt-sm mx-sm hover:bg-opacity-85 w-[70%]" on:click={()=>{matchData.trap = !matchData.trap;trap(matchData.trap)}} bind:this={trapBtn} style={trapBtnStyle}>Trap</button>
+    {/if}
+    </div>
+    {/if}
+    </div>
+    {/if}
+</div><br><br>
+</div>
+{/if}
+<!--whoa thats a lot of lines for something that was basically 85% done in 2 months, and mostly worked on by two people who didn't know the languages before starting-->
