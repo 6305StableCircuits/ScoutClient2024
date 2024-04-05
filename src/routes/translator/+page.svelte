@@ -1,10 +1,11 @@
+<!--translates matchData to 6305.airofan.com's API-->
 <script lang=ts>
     import { goto, pushState } from "$app/navigation";
     import jsonToFormData from '@ajoelp/json-to-formdata';
     import {onMount} from 'svelte';
     import {asLongAs} from '$lib/aslongas';
     import {savedData,scouterName} from "$lib/stores.js";
-	import { get} from "svelte/store";
+        import { get} from "svelte/store";
     var document = {
         readyState: "initialized",
         load: ()=>{
@@ -33,6 +34,7 @@
         download.href = "about:blank";
     }
     let dialogRef: any;
+    
     /*
     const editEvent = () => {
       dialogRef.showModal();
@@ -95,11 +97,8 @@
             modalStuffData.appendChild(createElem);
         }
     });*/
-    interface LooseObject {
-  [key: string]: any;
-}
-
-    var convertedjson:LooseObject = {};
+    
+    var convertedjson:any;
     const translate = (sessions:Array<any>) => {
         var fd: any;
         var s = sessions;
@@ -140,7 +139,7 @@
                 method:"POST",
                 body: fd,
                 headers:{
-                    "Content-Type":"application/json, text/javascript, */*; q=0.01",
+                    "Content-Type":"application/json, text/javascript, */*; q=0.01"
                 }
             }).then(res => {
                 if(res.status == 200){
@@ -150,7 +149,7 @@
                 console.error(err);
             })
         }
-    }
+    }    
     var body: any;
     const fileName = function(){
         var d = new Date();
@@ -185,7 +184,7 @@
         <h1 class="text-8xl text-center font-bold text-eerie-black dark:text-floral-white">&nbsp;&nbsp;&nbsp;Stable Scout 3.0</h1>
     </div>
     <div class="flex md:flex-row flex-col w-full flex-grow items-center bg-eerie-black dark:bg-floral-white">
-        <div id="data">
+		<div id="data">
             {#each saveData as datastuff, i}
             <div id={i.toString()} >
                 <input type='checkbox' name='data${i}' bind:checked={checks[i]}>
@@ -245,7 +244,7 @@
             {/each}
         </div>
         <!--<button style="padding:4%; padding-top:2%; padding-bottom:2%; margin-top:2%; border-radius:10px" class="border-timberwolf dark:border-eerie-black text-eerie-black bg-floral-white dark:bg-black-olive dark:text-floral-white hover:bg-light-hover dark:hover:bg-dark-hover active:bg-opacity-90 mx-auto" bind:this={btn} on:click={() => {modal.style.display = "block"}}>Edit Info</button>-->
-        <button on:click={() => {sendData()}} class="text-l bg-eerie-black text-floral-white px-md py-sm rounded-xl mx-sm hover:bg-opacity-85 w-[40%]">Export Data</button>&nbsp;&nbsp;<button on:click={() => {translate(saveData)}} class="text-l bg-eerie-black text-floral-white px-md py-sm rounded-xl mx-sm hover:bg-opacity-85 w-[40%]">Send Data [BETA]</button>
+        <button on:click={() => {sendData()}} class="text-l bg-eerie-black text-floral-white px-md py-sm rounded-xl mx-sm hover:bg-opacity-85 w-[40%]">Export Data</button>
         <a bind:this={download} style="display:none" href="about:blank" download><span></span></a>
     </div>
     <div style="display:none"> <!--this also hides the scary yellow lines-->

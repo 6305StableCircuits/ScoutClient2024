@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@ajoelp/json-to-formdata": "^1.5.0",
 		"firebase": "^10.8.1"
 	}
 }

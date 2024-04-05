@@ -28,6 +28,16 @@
         score: 0,
         autoScore: 0,
         teleopScore: 0,
+        advancedScoring: {
+            autoamp: 0,
+            autospeaker:0,
+            teleamp:0,
+            telespeaker:{
+                charged: 0,
+                reg: 0
+            },
+            rankingscore:0,
+        },
         left: false,
         spotlight: false,
         trap: false,
@@ -294,6 +304,7 @@
         if(!redo && !undo) {
             undone = [];
             asLongAs(matchPhase == "Auto" && hasIntaked, function() {
+            matchData.advancedScoring.autoamp += 2;
             points += 2;
             }, function() {
                 points += 1;
@@ -305,6 +316,7 @@
             if(lastAction.length != 0) {
                 lastAction.pop();
             }
+            matchData.advancedScoring.teleamp -= 1;
             points -= 1;
             hasIntaked = true;
         } else if(redo) {
@@ -312,6 +324,7 @@
             if(undone.length != 0) {
                 undone.pop();
             }
+            matchData.advancedScoring.teleamp += 1;
             points += 1;
             hasIntaked = false;
         } else {
@@ -329,8 +342,14 @@
         if(!redo && !undo) {
             asLongAs((isCharge || matchPhase == "Auto" && hasIntaked),  function() {
                 points += 5;   
+                if(isCharge){
+                matchData.advancedScoring.telespeaker.charged+=5;
+                }else{
+                    matchData.advancedScoring.autospeaker+=5;
+                }
             }, function() {
                 points += 2;
+                matchData.advancedScoring.telespeaker.reg+=2;
             });
             hasIntaked = false;
         } 
@@ -340,12 +359,14 @@
                 lastAction.pop();
             }
             points -= 2;
+            matchData.advancedScoring.telespeaker.reg -=2;
             hasIntaked = true;
         } else if(undo && isCharge) {
             undone = [...undone, {type:"chargedSpeakerScore",points:-5, name: "Charged Speaker Score"}];
             if(lastAction.length != 0) {
                 lastAction.pop();
             }
+            matchData.advancedScoring.telespeaker.charged-=5;
             points -= 5;
             hasIntaked = true;
         } else if(redo && !isCharge) {
@@ -354,6 +375,7 @@
                 undone.pop();
             }
             points += 2;
+            matchData.advancedScoring.telespeaker.reg+=2;
             hasIntaked = false;
         } else if(redo && isCharge) {
             lastAction = [...lastAction, {type:"chargedSpeakerScore",points:5, name: "Charged Speaker Score"}];
@@ -361,6 +383,7 @@
                 undone.pop();
             }
             points += 5;
+            matchData.advancedScoring.telespeaker.charged+=5;
             hasIntaked = false;
         } else {
             lastAction = [...lastAction, {type:"speakerScore", name: "Speaker Score"}];
